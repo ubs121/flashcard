@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Flashcard</string>
+    <string name="show_answer">Хариуг харах</string>
+    <string name="show_question">Асуултыг харах</string>
+    <string name="new_deck">Шинэ сэдэв</string>
+    <string name="correct">Зөв санасан</string>
+    <string name="wrong">Мэдэхгүй байсан</string>
+    <string name="card_template">&lt;html> &lt;head> &lt;link
+		rel="stylesheet" type="text/css"
+		href="file:///android_asset/flashcard_css" />
+		&lt;/head> &lt;body> &lt;span id="card_id">::id::&lt;/span> &lt;div class="card">
+		::content:: &lt;/div> &lt;/body> &lt;/html></string>
+    <string name="deckpicker_title">Сэдэв сонгоно уу</string>
+    <string name="deckpicker_nodeck">Сэдэв олдсонгүй.</string>
+
+</resources>
