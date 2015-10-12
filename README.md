@@ -1,2 +1,1 @@
-# Flashcard app (Anki alternative)
-
+# Flashcard using Polymer Starter Kit

@@ -1,0 +1,61 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="deck-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <ul>
+      <template is="dom-repeat" items="{{items}}">
+        <li><a href="{{_deckUrl(item.id)}}">{{item.name}}</a></li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    (function () {
+      'use strict';
+
+      Polymer({
+        is: 'deck-list',
+        properties: {
+          items: {
+            type: Array,
+            notify: true,
+          },
+        },
+
+        ready: function() {
+          // connect to database & load decks
+          app.db.getConnection().then(function(db) {
+            this.decks = db.getSchema().table('Deck');
+            return db.select().from(this.decks).exec();
+          }.bind(this)).then(function(rs) {
+            console.log(rs.length + ' decks loaded.');
+            this.items = rs;
+          }.bind(this));
+        },
+
+        _deckUrl: function(id) {
+          return '/decks/' + id;
+        },
+
+        _add: function() {
+          // db.insert(DECK_TABLE, null, values);
+        },
+
+        _delete: function() {
+          // db.delete(DECK_TABLE, " name = '" + deck + "'", null);
+        },
+
+        _rename: function() {
+          // db.update(DECK_TABLE, values, "name='" + oldName + "'", null);
+        },
+
+      });
+    })();
+  </script>
+
+</dom-module>

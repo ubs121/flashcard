@@ -1,0 +1,88 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+
+<dom-module id="flash-card">
+<style include="shared-styles"></style>
+<style>
+  :host {
+    display: block;
+    vertical-align: middle;
+    width: 100%;
+    text-align: center;
+    font-size: 140%;
+  }
+</style>
+
+  <template>
+      <div>Card: <span>{{id}}<span></div>
+
+      <div>
+        <div>{{question}}</div>
+        <div>{{answer}}</div>
+      </div>
+
+      <div class="fixed-bottom" style="margin: 10px">
+        <paper-button raised on-tap="_reset">Nok</paper-button>
+        <paper-button raised on-tap="_space">OK</paper-button>
+      </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'flash-card',
+
+        properties: {
+          id: String,
+          question: {type: String, value: 'question'},
+          answer: {type: String, value: ''},
+          interval: {type: Number, value: 1.0},
+          deck: {type: Number, observer: '_deckChanged'},
+        },
+
+        _deckChanged: function() {
+          console.log('Card: ' + this.deck);
+
+          this._next();
+        },
+
+        _next: function() {
+          // "select id,interval,question,answer "
+        			// + " from (SELECT * FROM cards WHERE deck_id=? ORDER BY interval LIMIT 50) "
+        			// + " order by random() limit 1"
+          //cursor = db.rawQuery(getCardSql, new String[] { String.valueOf(deck_id) });
+
+    			// cursor.moveToFirst();
+        },
+
+          // Картыг цээжилсэн учраас хойш тавих
+    		_space: function() {
+    			var newInterval = 1.0;
+    			if (this.interval != 0) {
+    				newInterval = 2 * this.interval; // Very basic spaced repetition.
+    			}
+
+    			// db.update(CARD_TABLE, values, "id='" + id + "'", null);
+    		},
+
+        // Цээжлээгүй бол интервалыг шинэчилэн давтах
+    		_reset: function() {
+    			var newInterval = 0.3;
+    			if (this.interval != 0) {
+    				newInterval = 1.01 * this.interval;
+    			}
+    			// db.update(CARD_TABLE, values, "id='" + id + "'", null);
+    		},
+
+        _add: function() {
+          // TODO: add new card
+        }
+      });
+    })();
+  </script>
+
+</dom-module>
