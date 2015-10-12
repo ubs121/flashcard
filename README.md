@@ -1,6 +1,6 @@
 # Flashcard
 
-Spaced repitation algorithm.
+Spaced repetition algorithm.
 
 Used several latest web technologies:
 
