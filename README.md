@@ -2,10 +2,11 @@
 
 Spaced repetition algorithm.
 
-Used several latest web technologies:
+This web app uses several modern web technologies:
 
 * Web components
 * Polymer Starter Kit
-* Lovefield database
+* Lovefield Query engine
 * IndexedDB
 * Golang
+* 3D CSS animation
