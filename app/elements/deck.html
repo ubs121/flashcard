@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
- <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="deck-list">
   <template>
@@ -40,7 +39,6 @@
         _loadDecks: function() {
           // connect to database & load decks
           fs.getConnection().then(function(db) {
-            //fs.loadDemo();
             return db.select().from(fs.deck_).exec();
           }).then(function(rs) {
             if (rs.length > 0) {

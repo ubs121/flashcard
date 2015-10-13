@@ -17,8 +17,6 @@ DataService.prototype.onConnected_ = function() {
   this.card_ = this.db_.getSchema().table('Card');
 
   this.loadDemo();
-
-
 };
 
 

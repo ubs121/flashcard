@@ -2,7 +2,10 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
-<link rel="import" href="x-flipcard.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="flip-animation.html">
 
 <dom-module id="flash-card">
 <style include="shared-styles"></style>
@@ -10,34 +13,39 @@
   :host {
     display: block;
     vertical-align: middle;
-    width: 100%;
     text-align: center;
 
   }
-  .content {
-    text-align: center;
-    font-size: 140%;
+
+  neon-animated-pages {
+    padding: 20px;
+    position: relative;
   }
 
-  .card {
-    height: 200px;
+  neon-animatable {
+    min-height: 300px;
+    top: 10px;
+    left: 10px;
+    bottom: 10px;
+    right: 10px;
+    border: 1px solid silver;
   }
 </style>
 
 <template>
-    <div class="layout vertical">
+    <div class="layout vertical" >
       <p>Card: <span>{{id}}<span></p>
 
-      <paper-material elevation="1" style="margin: 20px;">
-      <x-flipcard class="card">
-        <div class="front">{{question}}</div>
-        <div class="back">{{answer}}</div>
-      </x-flipcard>
-      </paper-material>
+      <!-- card flip -->
+      <neon-animated-pages id="pages" class="flex" on-tap="_flip" selected="0" entry-animation="flip-in-animation" exit-animation="flip-out-animation">
+        <neon-animatable><p>{{question}}</p></neon-animatable>
+        <neon-animatable><p>{{answer}}</p></neon-animatable>
+      </neon-animated-pages>
 
+      <!-- buttons -->
       <div class="fixed-bottom layout horizontal" style="margin: 10px">
-        <paper-button raised on-tap="_reset">Nok</paper-button>
-        <div class="flex">{{timerValue}}</div>
+        <paper-button raised on-tap="_reset">:-(</paper-button>
+        <div class="flex"></div>
         <paper-button raised on-tap="_space">:-)</paper-button>
       </div>
     </div>
@@ -88,18 +96,6 @@
               this.interval = rs[randIndex].interval;
               this.created = rs[randIndex].created;
               //this.deck = rs[0].deck;
-
-              // wait for 10 seconds
-              this.timerValue = 10;
-              this.timer = window.setInterval(function() {
-                if (this.timerValue > 0)  {
-                  this.timerValue = this.timerValue - 1;
-                } else {
-                  window.clearInterval(this.timer);
-                  // can't remember
-                  this._reset();
-                }
-              }.bind(this), 1000);
             } else {
               // empty
               console.log('No card!');
@@ -133,6 +129,15 @@
 
         _add: function() {
           // TODO: add new card
+        },
+
+        _flip: function() {
+          if (this.$.pages.selected == 0) {
+            this.$.pages.selected = 1;
+          } else {
+            this.$.pages.selected = 0;
+
+          }
         }
 
 
