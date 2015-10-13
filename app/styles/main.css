@@ -8,4 +8,5 @@ body {
   width: 100%;
   display: table;
   vertical-align: middle;
+  overflow-y: hidden;
 }

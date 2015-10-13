@@ -1,0 +1,87 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selectable.html">
+
+<dom-module id="x-flipcard">
+  <style>
+  :host {
+    display: block;
+    width: inherit;
+    height: inherit;
+  }
+
+  ::content front, ::content back {
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    margin: auto;
+
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    transition: all 0.5s ease-in-out;
+  }
+
+  ::content .front {
+    transform: rotateY(0) rotateX(0);
+  }
+
+  ::content .back {
+    transform: rotateY(-180deg);
+    visibility: hidden;
+  }
+
+  </style>
+
+  <template>
+    <content></content>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'x-flipcard',
+
+      behaviors: [
+        Polymer.IronResizableBehavior,
+        Polymer.IronSelectableBehavior
+      ],
+
+      properties: {
+        axis: {
+          type: String,
+          value: "y"
+        }
+      },
+
+      listeners: {
+        'tap': '_flip'
+      },
+
+      ready: function() {
+        this.front = true;
+      },
+
+      _flip: function() {
+        var front = this.querySelector(".front");
+        var back = this.querySelector(".back");
+
+        if (this.front) {
+          front.style.transform =  "rotateY(180deg)";
+          front.style.visibility = 'hidden' ;
+
+          back.style.transform =  "rotateY(0)";
+          back.style.visibility = 'visible' ;
+          this.front = false;
+        } else {
+          front.style.transform =  "rotateY(0)";
+          front.style.visibility = 'visible' ;
+
+          back.style.transform =  "rotateY(-180deg)";
+          back.style.visibility = 'hidden' ;
+          this.front = true;
+        }
+
+        this.async(this.notifyResize);
+      }
+    });
+  </script>
+
+</dom-module>

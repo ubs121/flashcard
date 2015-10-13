@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+ <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="deck-list">
   <template>
@@ -6,7 +7,11 @@
       :host {
         display: block;
       }
+      li {
+        padding: 10px;
+      }
     </style>
+
     <ul>
       <template is="dom-repeat" items="{{items}}">
         <li><a href="{{_deckUrl(item.id)}}">{{item.name}}</a></li>
@@ -24,17 +29,27 @@
           items: {
             type: Array,
             notify: true,
+            value: function() {return []; }
           },
         },
 
         ready: function() {
+          this._loadDecks();
+        },
+
+        _loadDecks: function() {
           // connect to database & load decks
-          app.db.getConnection().then(function(db) {
-            this.decks = db.getSchema().table('Deck');
-            return db.select().from(this.decks).exec();
-          }.bind(this)).then(function(rs) {
-            console.log(rs.length + ' decks loaded.');
-            this.items = rs;
+          fs.getConnection().then(function(db) {
+            //fs.loadDemo();
+            return db.select().from(fs.deck_).exec();
+          }).then(function(rs) {
+            if (rs.length > 0) {
+              console.log(rs.length + ' deck(s) loaded.');
+              this.items = rs;
+            } else {
+              // empty
+              console.log('No deck!');
+            }
           }.bind(this));
         },
 
@@ -52,7 +67,7 @@
 
         _rename: function() {
           // db.update(DECK_TABLE, values, "name='" + oldName + "'", null);
-        },
+        }
 
       });
     })();
