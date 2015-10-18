@@ -2,12 +2,14 @@
 Copyright (c) 2015 ubs121
 */
 
-(function(document) {
+
+(
+  function(document) {
   'use strict';
 
-  // өгөгдлийн сан
-  var ds = new DataService();
 
+
+  console.log('App created: ', new Date());
 
   // Grab a reference to our auto-binding template
   // and give it some initial binding values
@@ -69,5 +71,21 @@ Copyright (c) 2015 ubs121
   app.scrollPageToTop = function() {
     document.getElementById('mainContainer').scrollTop = 0;
   };
+
+
+  // өгөгдлийн сантай холбох
+  window.db = new DataService();
+
+  window.db.connect().then(function(_db) {
+    var deckSection = document.querySelector("section[data-route='decks']");
+    var homeSection = document.querySelector("section[data-route='home']");
+
+    var cardEl = document.createElement("flash-card");
+    cardEl.deck = 1; // TODO: read selected deck
+    homeSection.appendChild(cardEl);
+
+    var deckEl = document.createElement("deck-list");
+    deckSection.appendChild(deckEl);
+  });
 
 })(document);

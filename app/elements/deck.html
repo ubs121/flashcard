@@ -1,16 +1,16 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <dom-module id="deck-list">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-      li {
-        padding: 10px;
-      }
-    </style>
+  <style>
+    :host {
+      display: block;
+    }
+    li {
+      padding: 10px;
+    }
+  </style>
 
+  <template>
     <ul>
       <template is="dom-repeat" items="{{items}}">
         <li><a href="{{_deckUrl(item.id)}}">{{item.name}}</a></li>
@@ -19,56 +19,55 @@
   </template>
 
   <script>
-    (function () {
-      'use strict';
+    'use strict';
 
-      Polymer({
-        is: 'deck-list',
-        properties: {
-          items: {
-            type: Array,
-            notify: true,
-            value: function() {return []; }
-          },
+    Polymer({
+      is: 'deck-list',
+      properties: {
+        items: {
+          type: Array,
+          notify: true
         },
+      },
 
-        ready: function() {
-          this._loadDecks();
-        },
+      created: function() {
+        console.log('Deck created: ', new Date());
+      },
 
-        _loadDecks: function() {
-          // connect to database & load decks
-          fs.getConnection().then(function(db) {
-            return db.select().from(fs.deck_).exec();
-          }).then(function(rs) {
-            if (rs.length > 0) {
-              console.log(rs.length + ' deck(s) loaded.');
-              this.items = rs;
-            } else {
-              // empty
-              console.log('No deck!');
-            }
-          }.bind(this));
-        },
+      ready: function() {
+        console.log('Deck ready: ', new Date());
+        this._loadDecks();
+      },
 
-        _deckUrl: function(id) {
-          return '/decks/' + id;
-        },
+      _loadDecks: function() {
+        db.getDecks().then(function(rs) {
+          console.log('deck rs', rs);
+          if (rs.length > 0) {
+            this.items = rs;
+          } else {
+            // empty
+            console.log('No deck!');
+          }
+        }.bind(this));
+      },
 
-        _add: function() {
-          // db.insert(DECK_TABLE, null, values);
-        },
+      _deckUrl: function(id) {
+        return '/decks/' + id;
+      },
 
-        _delete: function() {
-          // db.delete(DECK_TABLE, " name = '" + deck + "'", null);
-        },
+      _add: function() {
+        // db.insert(DECK_TABLE, null, values);
+      },
 
-        _rename: function() {
-          // db.update(DECK_TABLE, values, "name='" + oldName + "'", null);
-        }
+      _delete: function() {
+        // db.delete(DECK_TABLE, " name = '" + deck + "'", null);
+      },
 
-      });
-    })();
+      _rename: function() {
+        // db.update(DECK_TABLE, values, "name='" + oldName + "'", null);
+      }
+
+    });
   </script>
 
 </dom-module>

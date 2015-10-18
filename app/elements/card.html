@@ -8,13 +8,11 @@
 <link rel="import" href="flip-animation.html">
 
 <dom-module id="flash-card">
-<style include="shared-styles"></style>
 <style>
   :host {
     display: block;
     vertical-align: middle;
     text-align: center;
-
   }
 
   neon-animated-pages {
@@ -34,12 +32,12 @@
 
 <template>
     <div class="layout vertical" >
-      <p>Card: <span>{{id}}<span></p>
+      <p>Card: <span>{{card.id}}<span></p>
 
       <!-- card flip -->
       <neon-animated-pages id="pages" class="flex" on-tap="_flip" selected="0" entry-animation="flip-in-animation" exit-animation="flip-out-animation">
-        <neon-animatable><p>{{question}}</p></neon-animatable>
-        <neon-animatable><p>{{answer}}</p></neon-animatable>
+        <neon-animatable><p>{{card.question}}</p></neon-animatable>
+        <neon-animatable><p>{{card.answer}}</p></neon-animatable>
       </neon-animated-pages>
 
       <!-- buttons -->
@@ -52,97 +50,74 @@
 </template>
 
   <script>
-    (function() {
-      'use strict';
+    'use strict';
 
-      Polymer({
-        is: 'flash-card',
+    Polymer({
+      is: 'flash-card',
 
-        properties: {
-          id: Number,
-          question: {type: String, value: 'question'},
-          answer: {type: String, value: ''},
-          interval: {type: Number, value: 1.0},
-          deck: {type: Number, observer: '_deckChanged'},
-          timerValue: 10
-        },
+      properties: {
+        card: {type: Object, value: {}, notify: true},
+        deck: {type: Number, observer: '_deckChanged'}
+      },
 
-        ready: function() {
-          this._next();
-        },
+      created: function() {
+        console.log('Card created: ', new Date());
+      },
 
-        _deckChanged: function() {
-          console.log('Selected deck: ' + this.deck);
+      ready: function() {
+        this._next();
+      },
 
-          this._next();
-        },
+      _deckChanged: function() {
+        console.log('Selected deck: ' + this.deck);
 
-        // next card
-        _next: function() {
-          fs.getConnection().then(function(db) {
-            return db.select()
-                .from(fs.card_)
-                .orderBy(fs.card_.interval, lf.Order.DESC)
-                .limit(10)
-                .exec();
-          }).then(function(rs) {
-            if (rs.length > 0) {
-              console.log('First card displayed !');
-              var randIndex = Math.floor((Math.random() * rs.length - 1) + 1)
+        //this._next();
+      },
 
-              this.id = rs[randIndex].id;
-              this.question = rs[randIndex].question;
-              this.answer = rs[randIndex].answer;
-              this.interval = rs[randIndex].interval;
-              this.created = rs[randIndex].created;
-              //this.deck = rs[0].deck;
-            } else {
-              // empty
-              console.log('No card!');
-            }
-          }.bind(this));
-        },
+      // next card
+      _next: function() {
+         db.nextCard().then(function(c) {
+           this.card = c;
+        }.bind(this));
+      },
 
-          // Картыг цээжилсэн учраас хойш тавих
-    		_space: function() {
-    			var newInterval = 1.0;
-    			if (this.interval != 0) {
-    				newInterval = 2 * this.interval; // Very basic spaced repetition.
-    			}
-    		},
-
-        // Цээжлээгүй бол интервалыг шинэчилэн давтах
-    		_reset: function() {
-    			var newInterval = 0.3;
-    			if (this.interval != 0) {
-    				newInterval = 1.01 * this.interval;
-    			}
-
-          // save in db
-          fs.getConnection().then(function(db) {
-            db.update(fs.card_)
-              .set(fs.card_.interval, newInterval)
-              .where(fs.card_.id.eq(this.id))
-              .exec();
-          }.bind(this));
-    		},
-
-        _add: function() {
-          // TODO: add new card
-        },
-
-        _flip: function() {
-          if (this.$.pages.selected == 0) {
-            this.$.pages.selected = 1;
-          } else {
-            this.$.pages.selected = 0;
-
-          }
+        // Very basic spaced repetition.
+  		_space: function() {
+  			if (this.card.interval != 0) {
+  				this.card.interval = 2 * this.card.interval;
+  			} else {
+          this.card.interval = 1.0;
         }
 
+        db.updateInterval(this.card);
+  		},
 
-      });
-    })();
+      // Цээжлээгүй бол интервалыг шинэчилэн давтах
+  		_reset: function() {
+  			if (this.card.interval != 0) {
+  				this.card.interval = 1.01 * this.card.interval;
+  			} else {
+          this.card.interval = 0.3;
+        }
+
+        db.updateInterval(this.card);
+  		},
+
+      _add: function() {
+        // TODO: add new card
+      },
+
+      _flip: function() {
+        if (this.$.pages.selected == 0) {
+          this.$.pages.selected = 1;
+        } else {
+          this.$.pages.selected = 0;
+
+        }
+      }
+
+
+    });
   </script>
 
 </dom-module>

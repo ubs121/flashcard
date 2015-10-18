@@ -41,6 +41,8 @@
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <!-- endbuild -->
 
+
+
   <!-- will be replaced with elements/elements.vulcanized.html -->
   <link rel="import" href="elements/elements.html">
   <!-- endreplace-->
@@ -91,6 +93,7 @@
           <span class="flex"></span>
 
           <!-- Toolbar icons -->
+          <paper-icon-button icon="refresh"></paper-icon-button>
           <paper-icon-button icon="add"></paper-icon-button>
 
           <!-- Application name -->
@@ -105,14 +108,12 @@
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
             <section data-route="home">
-              <flash-card deck="{{params.deck}}"></flash-card>
+
             </section>
 
             <section data-route="decks">
                 <h2 class="page-title">Select your topic:</h2>
-
-                <deck-list><deck-list>
-            </section>
+              </section>
 
             <section data-route="contact">
               <paper-material elevation="1">
@@ -127,7 +128,6 @@
     </paper-drawer-panel>
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
-    <!--
     <paper-toast id="caching-complete"
                  duration="6000"
                  text="Caching complete! This app will work offline.">
@@ -137,11 +137,11 @@
                           clients-claim
                           skip-waiting
                           on-service-worker-installed="displayInstalledToast">
+
       <platinum-sw-cache default-cache-strategy="fastest"
                          cache-config-file="cache-config.json">
       </platinum-sw-cache>
     </platinum-sw-register>
-    -->
 
   </template>
 
