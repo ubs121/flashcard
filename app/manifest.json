@@ -1,6 +1,6 @@
 {
   "name": "flashcard",
-  "short_name": "Polymer Starter Kit",
+  "short_name": "flashcard",
   "icons": [{
         "src": "images/touch/icon-128x128.png",
         "sizes": "128x128",

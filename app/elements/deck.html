@@ -41,7 +41,7 @@
 
       _loadDecks: function() {
         db.getDecks().then(function(rs) {
-          console.log('deck rs', rs);
+          console.log('deck(s) loaded: ', rs);
           if (rs.length > 0) {
             this.items = rs;
           } else {

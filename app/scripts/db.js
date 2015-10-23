@@ -57,6 +57,7 @@ class DataService {
       return this.db_
         .select()
         .from(this.deck_)
+        //.where(this.deck_.name.match(/500.*/))
         .exec();
     }.bind(this));
   }
