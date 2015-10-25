@@ -12,7 +12,7 @@ This web app uses several modern web technologies:
 * Service Worker
 * Push Notification
 * Google App Engine
-
+* ES6 using Babel.js
 
 
 ## Deploy on appengine
@@ -24,5 +24,5 @@ appcfg.py -A flashcard-121 update flashcard/
 https://flashcard-121.appspot.com/
 
 ## TODO
-- import csv decks
+- use native indexeddb
 - add, edit cards manually
