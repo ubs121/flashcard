@@ -1,3 +1,4 @@
+
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <dom-module id="deck-list">
@@ -8,19 +9,24 @@
     li {
       padding: 10px;
     }
+    button {
+      cursor: pointer;
+    }
   </style>
 
   <template>
     <ul>
       <template is="dom-repeat" items="{{items}}">
-        <li><a href="{{_deckUrl(item.id)}}">{{item.name}}</a></li>
+        <li class="layout horizontal">
+          <a href="{{_deckUrl(item.id)}}">{{item.name}}</a>
+          <span class="flex"></span>
+          <button>download</button>
+        </li>
       </template>
     </ul>
   </template>
 
   <script>
-    'use strict';
-
     Polymer({
       is: 'deck-list',
       properties: {
@@ -41,7 +47,6 @@
 
       _loadDecks: function() {
         db.getDecks().then(function(rs) {
-          console.log('deck rs', rs);
           if (rs.length > 0) {
             this.items = rs;
           } else {
@@ -55,8 +60,9 @@
         return '/decks/' + id;
       },
 
-      _add: function() {
+      add: function() {
         // db.insert(DECK_TABLE, null, values);
+        console.log('add deck');
       },
 
       _delete: function() {
@@ -68,6 +74,7 @@
       }
 
     });
+
   </script>
 
 </dom-module>

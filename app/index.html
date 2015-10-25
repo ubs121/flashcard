@@ -41,7 +41,12 @@
   <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <!-- endbuild -->
 
-
+  <!--
+  <script>
+      window.Polymer = window.Polymer || {};
+      window.Polymer.dom = 'shadow';
+  </script>
+  -->
 
   <!-- will be replaced with elements/elements.vulcanized.html -->
   <link rel="import" href="elements/elements.html">
@@ -68,18 +73,18 @@
         <!-- Drawer Content -->
         <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
           <a data-route="home" href="/" on-click="onDataRouteClick">
-            <iron-icon icon="home"></iron-icon>
-            <span>Home</span>
+            <iron-icon icon="font-download"></iron-icon>
+            <span>Card</span>
           </a>
 
           <a data-route="decks" href="/decks" on-click="onDataRouteClick">
-            <iron-icon icon="info"></iron-icon>
+            <iron-icon icon="view-module"></iron-icon>
             <span>Decks</span>
           </a>
 
-          <a data-route="contact" href="/contact" on-click="onDataRouteClick">
-            <iron-icon icon="mail"></iron-icon>
-            <span>Contact</span>
+          <a data-route="help" href="/help" on-click="onDataRouteClick">
+            <iron-icon icon="help"></iron-icon>
+            <span>Help</span>
           </a>
         </paper-menu>
       </paper-scroll-header-panel>
@@ -94,7 +99,7 @@
 
           <!-- Toolbar icons -->
           <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="add"></paper-icon-button>
+          <paper-icon-button icon="add" on-click="_onAdd"></paper-icon-button>
 
           <!-- Application name -->
           <div class="middle middle-container center horizontal layout">
@@ -107,19 +112,30 @@
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-            <section data-route="home">
+            <section id="home" data-route="home">
 
             </section>
 
-            <section data-route="decks">
-                <h2 class="page-title">Select your topic:</h2>
-              </section>
+            <section id="decks" data-route="decks">
+            </section>
 
-            <section data-route="contact">
-              <paper-material elevation="1">
-                <h2 class="page-title">Contact</h2>
-                <p>This is the contact section</p>
-              </paper-material>
+            <section data-route="help">
+                <h2 class="page-title">Card</h2>
+                <p>A Card has two side: question and answer. </p>
+                <p>When card is shown, you try to remember the anwser, then flip the card to see the actual answer. If you remember correctly hit 'happy' button, if not hit 'sad' button. Be honest to yourself.</p>
+
+                <h2 class="page-title">Deck</h2>
+                <p>Deck is a collection of cards. </p>
+                <p>You can add deck from other sources. The only requirement is the content should be pipe (|) separated question, answers. </p>
+                <p>For example: </p>
+                <pre>
+  Hello|Сайн байна уу
+  Goodbye|Баяртай
+  Welcome|Тавтай морил
+  wiki.mn/mn_flag.svg|Flag of Mongolia
+                </pre>
+
+                To add deck you can drag and drop a link, or use plus (+) button from the toolbar.
             </section>
 
           </iron-pages>
@@ -128,6 +144,7 @@
     </paper-drawer-panel>
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
+
     <paper-toast id="caching-complete"
                  duration="6000"
                  text="Caching complete! This app will work offline.">

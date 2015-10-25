@@ -10,3 +10,7 @@ body {
   vertical-align: middle;
   overflow-y: hidden;
 }
+
+.content {
+  margin: 20px;
+}
