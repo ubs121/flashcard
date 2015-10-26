@@ -9,15 +9,14 @@ function(document) {
     // and give it some initial binding values
     // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
     var app = document.querySelector('#app');
-    
+
 
     app.displayInstalledToast = function() {
         // Check to make sure caching is actually enabled—it won't be in the dev environment.
         if (!document.querySelector('platinum-sw-cache').disabled) {
             document.querySelector('#caching-complete').show();
         }
-    }
-    ;
+    };
 
     // Listen for template bound event to know when bindings
     // have resolved and content has been stamped to the page
@@ -78,22 +77,46 @@ function(document) {
         }
     };
 
+    app.fetchData = function(url, onResponse) {
+      var xmlhttp = new XMLHttpRequest();
+
+      xmlhttp.onreadystatechange = function() {
+          if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+              //var arr = JSON.parse(xmlhttp.responseText);
+              onResponse(xmlhttp.responseText);
+          }
+      };
+      xmlhttp.open("GET", url, true);
+      xmlhttp.send();
+    };
+
+    app.loadDemo = function() {
+      this.fetchData("data/English.csv", function(resp) {
+        try {
+          this.importCsv('English', resp);
+        } catch(e) {
+          // skip
+        }
+      }.bind(this));
+    };
 
     // өгөгдлийн сантай холбох
     window.db = new DataService();
 
     window.db.connect().then(function(_db) {
-        var deckSection = document.getElementById("decks");
-        var homeSection = document.getElementById("home");
-        var cardEl, deckEl;
+      app.db = _db;
 
-        cardEl = document.createElement("flash-card");
-        cardEl.deck = localStorage.getItem('deck') || 1;
-        //cardEl.bind('deck', new PathObserver(this, 'params.deck'));
-        homeSection.appendChild(cardEl);
+      var deckSection = document.getElementById("decks");
+      var homeSection = document.getElementById("home");
+      var cardEl, deckEl;
 
-        deckEl = document.createElement("deck-list");
-        deckSection.appendChild(deckEl);
+      cardEl = document.createElement("flash-card");
+      cardEl.deck = localStorage.getItem('deck') || 1;
+      //cardEl.bind('deck', new PathObserver(this, 'params.deck'));
+      homeSection.appendChild(cardEl);
+
+      deckEl = document.createElement("deck-list");
+      deckSection.appendChild(deckEl);
     });
 
 })(document);
