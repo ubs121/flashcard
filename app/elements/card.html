@@ -87,13 +87,16 @@
          //this.$.pages.exitAnimation = "flip-out-animation";
          //this.$.pages.selected = 0;
 
-        db.nextCard().then(function(c) {
-
+         var c = db.nextCard();
+         if (c) {
            this.card = c;
            this.$.question.innerText = c.question;
            this.$.answer.innerText = "";
            this.$.pages.selected = 0;
-        }.bind(this));
+         } else {
+           console.log('No card!');
+         }
+
       },
 
         // Very basic spaced repetition.

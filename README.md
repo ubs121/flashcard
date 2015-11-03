@@ -24,5 +24,7 @@ appcfg.py -A flashcard-121 update flashcard/
 https://flashcard-121.appspot.com/
 
 ## TODO
+- Сонгосон deck-н картуудыг харуулах
+
 - use native indexeddb
 - add, edit cards manually

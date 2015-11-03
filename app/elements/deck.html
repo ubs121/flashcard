@@ -37,23 +37,12 @@
       },
 
       created: function() {
-        console.log('Deck created: ', new Date());
+        console.log('deck-list created: ', new Date());
       },
 
       ready: function() {
-        console.log('Deck ready: ', new Date());
-        this._loadDecks();
-      },
-
-      _loadDecks: function() {
-        db.getDecks().then(function(rs) {
-          if (rs.length > 0) {
-            this.items = rs;
-          } else {
-            // empty
-            console.log('No deck!');
-          }
-        }.bind(this));
+        console.log('deck-list ready: ', new Date());
+        this.items = window.db.decks;
       },
 
       _deckUrl: function(id) {

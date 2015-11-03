@@ -9,12 +9,15 @@ function(document) {
     // and give it some initial binding values
     // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
     var app = document.querySelector('#app');
+    var deckSection = document.querySelector('#decks');
+    var homeSection = document.querySelector('#home');
 
+    console.log('deckSection', deckSection);
 
     app.displayInstalledToast = function() {
         // Check to make sure caching is actually enabled—it won't be in the dev environment.
-        if (!document.querySelector('platinum-sw-cache').disabled) {
-            document.querySelector('#caching-complete').show();
+        if (!Polymer.dom(document).querySelector('platinum-sw-cache').disabled) {
+          Polymer.dom(document).querySelector('#caching-complete').show();
         }
     };
 
@@ -61,8 +64,7 @@ function(document) {
         if (drawerPanel.narrow) {
             drawerPanel.closeDrawer();
         }
-    }
-    ;
+    };
 
     // Scroll page to top and expand header
     app.scrollPageToTop = function() {
@@ -75,6 +77,29 @@ function(document) {
         } else {
             deckEl.add();
         }
+    };
+
+    app._loadData = function() {
+      if (!window.db) {
+        return;
+      }
+
+      if (!window.db.dataExists) {
+        // load demo data
+        window.db.fetchData("data/English.csv", function(csvStr) {
+          try {
+            window.db.importCsv('English', csvStr);
+          } catch(e) {
+            console.log('Demo data import failed', e);
+          }
+        });
+      }
+
+      window.db.loadDecks();
+      // FIXME: load cards for last used deck
+      window.db.loadCards(1);
+
+      console.log('_loadData finished.');
     };
 
     app.fetchData = function(url, onResponse) {
@@ -90,33 +115,22 @@ function(document) {
       xmlhttp.send();
     };
 
-    app.loadDemo = function() {
-      this.fetchData("data/English.csv", function(resp) {
-        try {
-          this.importCsv('English', resp);
-        } catch(e) {
-          // skip
-        }
-      }.bind(this));
-    };
 
-    // өгөгдлийн сантай холбох
+
+    // connect to database
     window.db = new DataService();
+    window.db.connect().then(function() {
+      console.log('Database Connected.');
+      app._loadData();
 
-    window.db.connect().then(function(_db) {
-      app.db = _db;
-
-      var deckSection = document.getElementById("decks");
-      var homeSection = document.getElementById("home");
-      var cardEl, deckEl;
-
-      cardEl = document.createElement("flash-card");
+      var cardEl = document.createElement("flash-card");
       cardEl.deck = localStorage.getItem('deck') || 1;
       //cardEl.bind('deck', new PathObserver(this, 'params.deck'));
       homeSection.appendChild(cardEl);
 
-      deckEl = document.createElement("deck-list");
+      var deckEl = document.createElement("deck-list");
       deckSection.appendChild(deckEl);
     });
+
 
 })(document);

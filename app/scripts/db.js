@@ -1,11 +1,16 @@
 'use strict';
 
+const MAX_CARD = 100; //хамгийн ихдээ 100 карттай ажиллана.
+
 class DataService {
+
   constructor() {
     this.db_ = null;
     this.deck_ = null;
     this.card_ = null;
     this.schemaBuilder = this._buildSchema();
+
+    this.cards = new Array();
   }
 
   connect() {
@@ -22,6 +27,8 @@ class DataService {
 
       console.log('Connected to db !');
 
+
+      // TODO: хоосон эсэхийг шалгаад байхгүй бол demo өгөгдөл оруулах
       // demo data
       this.loadDemo();
       return db;
@@ -59,32 +66,33 @@ class DataService {
       .exec();
   }
 
-  nextCard() {
-    // FIXME: top 1-г олох арга хэрэгтэй,
-    return this.db_
+  // картуудыг санах ойд ачаалах
+  loadCards(deckId) {
+    this.db_
       .select()
       .from(this.card_)
-      .where(this.card_.deck.eq(1))
+      .where(this.card_.deck.eq(deckId))
       .orderBy(this.card_.interval, lf.Order.DESC)
-      //.orderBy(Promise.resolve(Math.floor((Math.random() * 20 - 1))))
-      .limit(30)
+      .limit(MAX_CARD)
       .exec()
-        .then(function(rs) {
-            if (rs.length > 0) {
-              var i = Math.floor((Math.random() * rs.length - 1) + 1);
-              var card = {};
-              card.id = rs[i].id;
-              card.question = rs[i].question;
-              card.answer = rs[i].answer;
-              card.interval = rs[i].interval;
-              card.created = rs[i].created;
-              card.deck = rs[i].deck;
+      .then(function(rs) {
+        for (i = 0; i < rs.length; i++) {
+          var c = {};
+          c.id = rs[i].id;
+          c.question = rs[i].question;
+          c.answer = rs[i].answer;
+          c.interval = rs[i].interval;
+          c.created = rs[i].created;
+          c.deck = rs[i].deck;
+          this.cards.push(c);
+        }
+      });
+  }
 
-              return card;
-            } else {
-              return {};
-            }
-          });
+  nextCard() {
+    // FIXME: top 1-г олох арга хэрэгтэй,
+    // Math.floor((Math.random() * rs.length - 1) + 1);
+
   }
 
   updateInterval(c) {
@@ -95,9 +103,18 @@ class DataService {
       .exec();
   }
 
+  dataExists() {
+    this.db_
+      .select()
+      .from(this.card_)
+  }
+
   importCsv(deckName, csvString) {
+    // FIXME: id-г зөв тооцоолох
+    var newDeckId = 1;
+
     // insert deck
-    var d = this.deck_.createRow({ id: 1, name: deckName, created: new Date()});
+    var d = this.deck_.createRow({ id: newDeckId, name: deckName, created: new Date()});
     this.db_
       .insertOrReplace()
       .into(this.deck_)
@@ -120,13 +137,12 @@ class DataService {
 
       var values = line.split(/[,|;\t]/);
       var obj = {};
+      obj.id = this.genId(obj.question);
       obj.question = values[0];
       obj.answer = values[1];
-      obj.interval = 1.0;
+      obj.interval = 1.0; // FIXME: өмнө ажилласан утгыг дараад байна !
       obj.created = new Date();
-      obj.id = this.hashCode(obj.question);
-      // TODO:
-      obj.deck = 1;
+      obj.deck = newDeckId;
       objects.push(this.card_.createRow(obj));
     }
 
@@ -150,7 +166,7 @@ class DataService {
   }
 
 
-  hashCode(s) {
+  genId(s) {
     var hash = 0, i, chr, len;
     if (s.length == 0) return hash;
     for (i = 0, len = s.length; i < len; i++) {
@@ -162,6 +178,7 @@ class DataService {
   }
 
   loadDemo() {
+
     this.fetchData("data/English.csv", function(resp) {
       try {
         this.importCsv('English', resp);
