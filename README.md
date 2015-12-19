@@ -1,6 +1,9 @@
 # Flashcard
 
-Spaced repetition algorithm.
+Flashcard is a web app which makes remembering things easy.  It uses a spaced repetition algorithm.
+
+
+## Used technologies
 
 This web app uses several modern web technologies:
 
@@ -17,14 +20,14 @@ This web app uses several modern web technologies:
 
 ## Deploy on appengine
 
-appcfg.py -A flashcard-121 update flashcard/
+```sh
+$ appcfg.py -A flashcard-121 update flashcard/
+```
 
 ## Demo
 
 https://flashcard-121.appspot.com/
 
 ## TODO
-- Сонгосон deck-н картуудыг харуулах
-
 - use native indexeddb
 - add, edit cards manually
