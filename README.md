@@ -1,14 +1,15 @@
 # Flashcard
 
-Flashcard is a web app which makes remembering things easy.  It uses a spaced repetition algorithm.
+Flashcard is a web app which makes remembering things easy.  It uses a very simple spaced repetition algorithm.
 
+It's a progressive web app that uses latest web technologies.
 
 ## Used technologies
 
 This web app uses several modern web technologies:
 
+* Progressive Web App
 * Web components, Polymer Starter Kit
-* Installable Web App
 * Lovefield Query engine
 * IndexedDB
 * 3D CSS animation
