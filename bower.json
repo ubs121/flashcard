@@ -7,7 +7,7 @@
     "paper-elements": "PolymerElements/paper-elements#^1.0.6",
     "platinum-elements": "PolymerElements/platinum-elements#^1.2.0",
     "page": "visionmedia/page.js#~1.6.4",
-    "lovefield": "lovefield#master"
+    "lovefield": "lovefield#^v2.1.2"
   },
   "devDependencies": {
     "web-component-tester": "*",
