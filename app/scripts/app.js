@@ -86,7 +86,9 @@ function(document) {
 
       if (!window.db.dataExists) {
         // load demo data
-        window.db.fetchData("data/English.csv", function(csvStr) {
+        fetch("data/English.csv").then(function(response) {
+          return response.text();
+        }).then(function(csvStr) {
           try {
             window.db.importCsv('English', csvStr);
           } catch(e) {
@@ -101,21 +103,6 @@ function(document) {
 
       console.log('_loadData finished.');
     };
-
-    app.fetchData = function(url, onResponse) {
-      var xmlhttp = new XMLHttpRequest();
-
-      xmlhttp.onreadystatechange = function() {
-          if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-              //var arr = JSON.parse(xmlhttp.responseText);
-              onResponse(xmlhttp.responseText);
-          }
-      };
-      xmlhttp.open("GET", url, true);
-      xmlhttp.send();
-    };
-
-
 
     // connect to database
     window.db = new DataService();

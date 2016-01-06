@@ -95,7 +95,7 @@ DataService.prototype.loadCards = function(deckId) {
   catch(e){
      console.log(e);
   }
-}
+};
 
 DataService.prototype.nextCard = function() {
   if (this.cardArray.length == 0) {
@@ -115,16 +115,16 @@ DataService.prototype.nextCard = function() {
 
   //
   // Math.floor((Math.random() * rs.length - 1) + 1);
-}
+};
 
 DataService.prototype.updateInterval = function(c) {
   // interval талбарт оноосон утгыг баазад хадгалах
-}
+};
 
 // check if data exists
 DataService.prototype.dataExists = function()  {
     return false;
-}
+};
 
 DataService.prototype.loadDecks = function() {
   try {
@@ -143,7 +143,7 @@ DataService.prototype.loadDecks = function() {
   catch(e){
      console.log(e);
   }
-}
+};
 
 // import csv into database
 DataService.prototype.importCsv = function(deckName, csvString) {
@@ -195,20 +195,7 @@ DataService.prototype.importCsv = function(deckName, csvString) {
 
     var request = store.add(c);
   }
-}
-
-DataService.prototype.fetchData = function(url, onResponse) {
-  var xmlhttp = new XMLHttpRequest();
-
-  xmlhttp.onreadystatechange = function() {
-      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-          //var arr = JSON.parse(xmlhttp.responseText);
-          onResponse(xmlhttp.responseText);
-      }
-  };
-  xmlhttp.open("GET", url, true);
-  xmlhttp.send();
-}
+};
 
 DataService.prototype.genId = function(s) {
   var hash = 0, i, chr, len;
@@ -219,4 +206,4 @@ DataService.prototype.genId = function(s) {
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
-}
+};
