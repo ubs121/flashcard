@@ -11,6 +11,8 @@
 <style>
   :host {
     display: block;
+    width: 100%;
+    height: 100%;
     vertical-align: middle;
     text-align: center;
   }
@@ -27,31 +29,40 @@
     right: 10px;
     @apply(--shadow-elevation-2dp);
   }
+
+  #front {
+    width: 100%;
+    height: 100%
+    cursor: pointer;
+  }
+
+  #back {
+    width: 100%;
+    height: 100%;
+    background: silver;
+  }
 </style>
 
 <template>
     <div class="layout vertical" >
-      <p>Card: <span>{{card.id}}<span></p>
+      <div class="layout horizontal" style="margin: 10px">
+        <paper-button raised on-tap="_reset">:-(</paper-button>
+        <div class="flex"></div>
+        <paper-button raised on-tap="_space">:-)</paper-button>
+      </div>
 
       <!-- card flip -->
       <neon-animated-pages id="pages" class="flex" on-tap="_flip" selected="0">
         <neon-animatable>
-            <p id="question"></p>
+            <div id="front">front</div>
         </neon-animatable>
         <neon-animatable>
-            <p id="answer"></p>
-
+            <div id="back">back</div>
         </neon-animatable>
       </neon-animated-pages>
 
-
-      <!-- buttons -->
-      <div id="buttons" class="fixed-bottom layout horizontal" style="margin: 10px">
-        <paper-button raised on-tap="_reset">:-(</paper-button>
-        <div class="flex"></div>
-        <paper-button raised on-tap="_space">зөв санасан</paper-button>
-      </div>
-
+      <!-- response buttons -->
+      
     </div>
 </template>
 
@@ -60,75 +71,22 @@
       is: 'flash-card',
 
       properties: {
-        card: {type: Object, value: {}, notify: true},
-        deck: {type: String, value: 1, observer: '_deckChanged'}
-      },
-
-      created: function() {
-        console.log('Card created: ', new Date());
+        card: {
+          type: Object, 
+          value: function() { return {}; }, 
+          notify: true,
+          observer: "_cardChanged"
+        }
       },
 
       ready: function() {
         this.$.pages.selected = 0;
-        this._next();
       },
 
-      _deckChanged: function() {
-        console.log('Selected deck: ' + this.deck);
-
-        //this._next();
-      },
-
-      // next card
-      _next: function() {
-        // TODO: slide effect оруулвал зүгээр
-
-         //this.$.pages.entryAnimation = "slide-right-animation";
-         //this.$.pages.exitAnimation = "flip-out-animation";
-         //this.$.pages.selected = 0;
-
-         var c = db.nextCard();
-         if (c) {
-           this.card = c;
-           this.$.question.innerText = c.question;
-           this.$.answer.innerText = "";
-           this.$.pages.selected = 0;
-         } else {
-           console.log('No card!');
-         }
-
-      },
-
-        // Very basic spaced repetition.
-  		_space: function(e) {
-  		  e.preventDefault();
-  			if (this.card.interval) {
-  			   this.card.interval = 2 * this.card.interval;
-  			} else {
-               this.card.interval = 1.0;
-            }
-
-            db.updateInterval(this.card);
-            this._next();
-  		},
-
-      // Цээжлээгүй бол интервалыг шинэчилэн давтах
-  		_reset: function(e) {
-  		  e.preventDefault();
-
-  			if (this.card.interval) {
-  			  this.card.interval = 1.01 * this.card.interval;
-  			} else {
-              this.card.interval = 0.3;
-            }
-
-            db.updateInterval(this.card);
-            this._next();
-  		},
-
-      add: function() {
-        // TODO: add new card
-        console.log('add new card');
+      _cardChanged: function(e) {
+        this.$.front.innerText = this.card.question || "no data";
+        this.$.back.innerText = "";
+        this.$.pages.selected = 0;
       },
 
       _flip: function(e) {
@@ -138,11 +96,39 @@
         this.$.pages.exitAnimation = "flip-out-animation";
 
         if (this.$.pages.selected === 0) {
-          this.$.answer.innerText = this.card.answer;
+          this.$.back.innerText = this.card.answer || "no data";
           this.$.pages.selected = 1;
         } else {
           this.$.pages.selected = 0;
         }
+      },
+
+      _reset: function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Цээжлээгүй бол интервалыг шинэчилэн давтах
+        if (this.card.interval) {
+          this.card.interval = 1.01 * this.card.interval;
+        } else {
+          this.card.interval = 0.3;
+        }
+
+        this.fire('next');
+      },
+
+      _space: function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Very basic spaced repetition.
+        if (this.card.interval) {
+           this.card.interval = 2 * this.card.interval;
+        } else {
+           this.card.interval = 1.0;
+        }
+
+        this.fire('next');
       }
 
 

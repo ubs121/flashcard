@@ -41,5 +41,5 @@ $ appcfg.py -A flashcard-121 update flashcard/
 https://flashcard-121.appspot.com/
 
 ## TODO
-- use native indexeddb
+- use native indexeddb OR SampleDB
 - add, edit cards manually

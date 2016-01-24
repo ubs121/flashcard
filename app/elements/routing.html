@@ -11,15 +11,37 @@ Copyright (c) 2015 ubs121
     // client-side router inspired by the Express router
     // More info: https://visionmedia.github.io/page.js/
 
+    // Removes end / from app.baseUrl which page.base requires for production
+    if (window.location.port === '') {  // if production
+      page.base(app.baseUrl.replace(/\/$/, ''));
+    }
+
     // Middleware
     function scrollToTop(ctx, next) {
       app.scrollPageToTop();
       next();
     }
 
+    function closeDrawer(ctx, next) {
+      app.closeDrawer();
+      next();
+    }
+
     // Routes
-    page('/', scrollToTop, function() {
+    page('*', scrollToTop, closeDrawer, function(ctx, next) {
+      next();
+    });
+
+    page('/', function() {
       app.route = 'home';
+    });
+
+    page(app.baseUrl, function() {
+      app.route = 'home';
+    });
+
+    page('/decks', scrollToTop, function() {
+      app.route = 'decks';
     });
 
     page('/decks/:deck', scrollToTop, function(data) {
@@ -27,12 +49,15 @@ Copyright (c) 2015 ubs121
       app.params = data.params;
     });
 
-    page('/decks', scrollToTop, function() {
-      app.route = 'decks';
-    });
-
     page('/help', scrollToTop, function() {
       app.route = 'help';
+    });
+
+    // 404
+    page('*', function() {
+      app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
+      app.$.toast.show();
+      page.redirect(app.baseUrl);
     });
 
     // add #! before urls

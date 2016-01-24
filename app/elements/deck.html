@@ -42,16 +42,10 @@
 
       ready: function() {
         console.log('deck-list ready: ', new Date());
-        this.items = window.db.decks;
       },
 
       _deckUrl: function(id) {
         return '/decks/' + id;
-      },
-
-      add: function() {
-        // db.insert(DECK_TABLE, null, values);
-        console.log('add deck');
       },
 
       _delete: function() {

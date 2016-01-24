@@ -1,13 +1,18 @@
 <!doctype html>
+<!--
+@license
+Copyright (c) 2015 ubs121
+-->
 
-<html lang="">
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="generator" content="Polymer Starter Kit" />
+  <meta name="generator" content="Polymer Starter Kit">
   <title>Flashcard</title>
+
   <!-- Place favicon.ico in the `app/` directory -->
 
   <!-- Chrome for Android theme color -->
@@ -38,26 +43,18 @@
   <!-- endbuild-->
 
   <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
-  <script src="bower_components/webcomponentsjs/webcomponents-lite.js" async></script>
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <!-- endbuild -->
 
-  <!--
-  <script>
-      window.Polymer = window.Polymer || {};
-      window.Polymer.dom = 'shadow';
-  </script>
-  -->
-
-  <!-- will be replaced with elements/elements.vulcanized.html -->
-  <link rel="import" href="elements/elements.html" async>
-  <!-- endreplace-->
+  <!-- Because this project uses vulcanize this should be your only html import
+       in this file. All other imports should go in elements.html -->
+  <link rel="import" href="elements/elements.html">
 
   <!-- For shared styles, shared-styles.html import in elements.html -->
   <style is="custom-style" include="shared-styles"></style>
-
 </head>
 
-<body unresolved class="fullbleed layout vertical">
+<body unresolved>
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
 
@@ -67,22 +64,22 @@
 
         <!-- Drawer Toolbar -->
         <paper-toolbar id="drawerToolbar">
-          <span class="paper-font-title">Menu</span>
+          <span class="menu-name">Menu</span>
         </paper-toolbar>
 
         <!-- Drawer Content -->
-        <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-          <a data-route="home" href="/" on-click="onDataRouteClick">
+        <paper-menu attr-for-selected="data-route" selected="[[route]]">
+           <a data-route="home" href="{{baseUrl}}">
             <iron-icon icon="font-download"></iron-icon>
             <span>Card</span>
           </a>
 
-          <a data-route="decks" href="/decks" on-click="onDataRouteClick">
+          <a data-route="decks" href="{{baseUrl}}decks">
             <iron-icon icon="view-module"></iron-icon>
             <span>Decks</span>
           </a>
 
-          <a data-route="help" href="/help" on-click="onDataRouteClick">
+          <a data-route="help" href="{{baseUrl}}help">
             <iron-icon icon="help"></iron-icon>
             <span>Help</span>
           </a>
@@ -90,33 +87,38 @@
       </paper-scroll-header-panel>
 
       <!-- Main Area -->
-      <paper-scroll-header-panel main condenses keep-condensed-header>
-
+      <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
         <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar" class="meduim">
+        <paper-toolbar id="mainToolbar" class="tall">
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-          <span class="flex"></span>
+
+          <span class="space"></span>
 
           <!-- Toolbar icons -->
           <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="add" on-click="_onAdd"></paper-icon-button>
+          <paper-icon-button icon="add" on-click="newCard"></paper-icon-button>
 
           <!-- Application name -->
-          <div class="middle middle-container center horizontal layout">
+          <div class="middle middle-container">
             <div class="app-name">Flashcard</div>
           </div>
 
+          <!-- Application sub title -->
+          <div class="bottom bottom-container">
+            <div class="bottom-title">The future of the web today</div>
+          </div>
         </paper-toolbar>
 
         <!-- Main Content -->
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
-
-            <section id="home" data-route="home">
-
+          
+            <section data-route="home" on-next="updateAndNext">
+              <flash-card card="{{card}}"></flash-card>
             </section>
 
-            <section id="decks" data-route="decks">
+            <section data-route="decks">
+              <deck-list data="{{decks}}"></deck-list>
             </section>
 
             <section data-route="help">
@@ -137,14 +139,17 @@
 
                 To add deck you can drag and drop a link, or use plus (+) button from the toolbar.
             </section>
-
           </iron-pages>
         </div>
       </paper-scroll-header-panel>
     </paper-drawer-panel>
 
-    <!-- Uncomment next block to enable Service Worker support (1/2) -->
+    <paper-toast id="toast">
+      <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+    </paper-toast>
 
+    <!-- Uncomment next block to enable Service Worker support (1/2) -->
+    <!--
     <paper-toast id="caching-complete"
                  duration="6000"
                  text="Caching complete! This app will work offline.">
@@ -153,19 +158,18 @@
     <platinum-sw-register auto-register
                           clients-claim
                           skip-waiting
+                          base-uri="bower_components/platinum-sw/bootstrap"
                           on-service-worker-installed="displayInstalledToast">
-
       <platinum-sw-cache default-cache-strategy="fastest"
                          cache-config-file="cache-config.json">
       </platinum-sw-cache>
     </platinum-sw-register>
+    -->
 
   </template>
 
-  <!--<script src="bower_components/lovefield/dist/lovefield.min.js"></script>-->
-
   <!-- build:js scripts/app.js -->
-  <script src="scripts/db_pure.js"></script>
+  <script src="scripts/db.js"></script>
   <script src="scripts/app.js"></script>
   <!-- endbuild-->
 </body>

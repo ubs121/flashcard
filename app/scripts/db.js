@@ -1,190 +1,143 @@
-'use strict';
+/**
+ * Copyright 2015 ubs121
+ */
 
-const MAX_CARD = 100; //хамгийн ихдээ 100 карттай ажиллана.
+// Өгөгдлийн үйлчилгээ
+var DataService = function() {
+ this.db_ = null;
+ this.card_ = null;
+ this.cards = new Array();
+ this.decks = new Array();
+ window.ds = this;
+};
 
-class DataService {
+DataService.prototype.connect = function() {
+   var resolver = new Resolver();
 
-  constructor() {
-    this.db_ = null;
-    this.deck_ = null;
-    this.card_ = null;
-    this.schemaBuilder = this._buildSchema();
+   if (this.db_ != null) {
+     resolver.resolve(this.db_);
+   }
 
-    this.cards = new Array();
+   var req = window.indexedDB.open('flashcard', 1);
+
+   req.onsuccess = function(ev) {
+     this.db_ = ev.target.result;
+     resolver.resolve(ev.target.result);
+   }.bind(this);
+
+   req.onerror = function(e) {
+     resolver.reject(e);
+   };
+
+   req.onupgradeneeded = function(ev) {
+     var rawDb = ev.target.result;
+     var mc = rawDb.createObjectStore("card", { keyPath: 'question' });
+     mc.createIndex('ixInterval', 'interval', { unique: false });
+     mc.createIndex('ixDeck', 'deck', { unique: false });
+   };
+
+   return resolver.promise;
+};
+
+// import deck from somewhere
+DataService.prototype.import = function(deckId, csvPath) {
+  console.log('Importing sample data...');
+
+  if (this.db_ == null) {
+      console.log('this.db_ is null !!!');
   }
 
-  connect() {
-    if (this.db_ !== null) {
-      return Promise.resolve(this.db_);
+  fetch(csvPath).then(function(response) {
+    return response.text();
+  }).then(function(csvStr) {
+    this.importCsv(deckId, csvStr);
+    console.log('import is done.');
+  }.bind(this)).catch(function(err) {
+    console.log('Demo data import failed', err);
+  });
+};
+
+// import csv into database
+DataService.prototype.importCsv = function(deckId, csvString) {
+  // create a transaction
+  var trans = this.db_.transaction("card", "readwrite");
+  var storeCard = trans.objectStore("card");
+  trans.oncomplete = function(event) {
+    console.log('importCsv succeeded.');
+  };
+
+  trans.onerror = function(event) {
+    // ignore duplicated error message
+    // console.log('importCsv failed', event);
+  };
+
+  // insert cards
+  var lines = csvString.split(/[\r\n]/);
+  var headerLine = lines[0];
+  var fields = headerLine.split(/[,|;\t]/);
+
+  for (var i = 1; i < lines.length; i++) {
+    var line = lines[i];
+
+    // The csvString that comes from the server has an empty line at the end,
+    // need to ignore it.
+    if (line.length == 0) {
+      continue;
     }
 
-    // connect to db
-    //var opts = {storeType: lf.schema.DataStoreType.INDEXED_DB};
-    return this.schemaBuilder.connect().then(function(db){
-      this.db_ = db;
-      this.deck_ = db.getSchema().table('Deck');
-      this.card_ = db.getSchema().table('Card');
+    var values = line.split(/[,|;\t]/);
+    var c = {};
+    c.question = values[0];
+    c.answer = values[1];
+    //c.interval = 1.0;
+    c.created = new Date();
+    c.deck = deckId;
 
-      console.log('Connected to db !');
+    var request = storeCard.add(c);
+  }
+};
 
-
-      // TODO: хоосон эсэхийг шалгаад байхгүй бол demo өгөгдөл оруулах
-      // demo data
-      this.loadDemo();
-      return db;
-    }.bind(this));
-
+DataService.prototype.nextCard = function() {
+  if (this.cards.length == 0) {
+    return {};
   }
 
-  _buildSchema() {
-    var schemaBuilder = lf.schema.create('flashcard', 1);
-    console.log('_buildSchema succeeded !');
+  // sort cards
+  this.cards.sort(function(a, b) {return (a.interval - b.interval); });
 
-    schemaBuilder.createTable('Deck').
-        addColumn('id', lf.Type.INTEGER).
-        addColumn('name', lf.Type.STRING).
-        addColumn('created', lf.Type.DATE_TIME).
-        addPrimaryKey(['id']);
+  // pick first, but randomize
+  var firstCard = this.cards[0];
 
-    schemaBuilder.createTable('Card').
-        addColumn('id', lf.Type.INTEGER).
-        addColumn('question', lf.Type.STRING).
-        addColumn('answer', lf.Type.STRING).
-        addColumn('interval', lf.Type.NUMBER).
-        addColumn('created', lf.Type.DATE_TIME).
-        addColumn('deck', lf.Type.INTEGER).
-        addPrimaryKey(['id']).
-        addIndex('idxInterval', ['interval'], false, lf.Order.DESC);
-
-    return schemaBuilder;
+  var i=1;
+  while (i<this.cards.length && this.cards[i].interval == firstCard.interval) {
+    i++;
   }
 
-  getDecks() {
-    return this.db_
-      .select()
-      .from(this.deck_)
-      .exec();
-  }
+  //
+  // Math.floor((Math.random() * rs.length - 1) + 1);
+};
 
-  // картуудыг санах ойд ачаалах
-  loadCards(deckId) {
-    this.db_
-      .select()
-      .from(this.card_)
-      .where(this.card_.deck.eq(deckId))
-      .orderBy(this.card_.interval, lf.Order.DESC)
-      .limit(MAX_CARD)
-      .exec()
-      .then(function(rs) {
-        for (i = 0; i < rs.length; i++) {
-          var c = {};
-          c.id = rs[i].id;
-          c.question = rs[i].question;
-          c.answer = rs[i].answer;
-          c.interval = rs[i].interval;
-          c.created = rs[i].created;
-          c.deck = rs[i].deck;
-          this.cards.push(c);
-        }
-      });
-  }
+DataService.prototype.updateInterval = function(c) {
+  // interval талбарт оноосон утгыг баазад хадгалах
+};
 
-  nextCard() {
-    // FIXME: top 1-г олох арга хэрэгтэй,
-    // Math.floor((Math.random() * rs.length - 1) + 1);
-
-  }
-
-  updateInterval(c) {
-    return this.db_
-      .update(this.card_)
-      .set(this.card_.interval, c.interval)
-      .where(this.card_.id.eq(c.id))
-      .exec();
-  }
-
-  dataExists() {
-    this.db_
-      .select()
-      .from(this.card_)
-  }
-
-  importCsv(deckName, csvString) {
-    // FIXME: id-г зөв тооцоолох
-    var newDeckId = 1;
-
-    // insert deck
-    var d = this.deck_.createRow({ id: newDeckId, name: deckName, created: new Date()});
-    this.db_
-      .insertOrReplace()
-      .into(this.deck_)
-      .values([d]).exec();
-
-    // insert cards
-    var lines = csvString.split('\n');
-    var headerLine = lines[0];
-    var fields = headerLine.split(',');
-
-    var objects = [];
-    for (var i = 1; i < lines.length; i++) {
-      var line = lines[i];
-
-      // The csvString that comes from the server has an empty line at the end,
-      // need to ignore it.
-      if (line.length == 0) {
-        continue;
-      }
-
-      var values = line.split(/[,|;\t]/);
-      var obj = {};
-      obj.id = this.genId(obj.question);
-      obj.question = values[0];
-      obj.answer = values[1];
-      obj.interval = 1.0; // FIXME: өмнө ажилласан утгыг дараад байна !
-      obj.created = new Date();
-      obj.deck = newDeckId;
-      objects.push(this.card_.createRow(obj));
-    }
-
-    return this.db_
-      .insertOrReplace()
-      .into(this.card_)
-      .values(objects).exec();
-  }
-
-  fetchData(url, onResponse) {
-    var xmlhttp = new XMLHttpRequest();
-
-    xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            //var arr = JSON.parse(xmlhttp.responseText);
-            onResponse(xmlhttp.responseText);
-        }
-    };
-    xmlhttp.open("GET", url, true);
-    xmlhttp.send();
-  }
+// check if data exists
+DataService.prototype.dataExists = function()  {
+    return false;
+};
 
 
-  genId(s) {
-    var hash = 0, i, chr, len;
-    if (s.length == 0) return hash;
-    for (i = 0, len = s.length; i < len; i++) {
-      chr   = s.charCodeAt(i);
-      hash  = ((hash << 5) - hash) + chr;
-      hash |= 0; // Convert to 32bit integer
-    }
-    return hash;
-  }
+/** @constructor */
+var Resolver = function() {
+ /** @type {!Function} */
+ this.resolve;
 
-  loadDemo() {
+ /** @type {!Function} */
+ this.reject;
 
-    this.fetchData("data/English.csv", function(resp) {
-      try {
-        this.importCsv('English', resp);
-      } catch(e) {
-        // skip
-      }
-    }.bind(this));
-  }
-}
+ /** @type {!Promise} */
+ this.promise = new Promise((function(res, rej) {
+   this.resolve = res;
+   this.reject = rej;
+ }).bind(this));
+};
