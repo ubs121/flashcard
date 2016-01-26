@@ -78,37 +78,61 @@ Copyright (c) 2015 ubs121
   db.connect().then(function() {
     console.log('Database Connected.');
 
-    //if (!db.dataExists) {
-      // sample data
-      db.import("english_sample", "data/english.csv");
-    //}
+    db.getDecks().then(function(rs) {
+      app.decks = rs;
+    });
+
+    if (db.isEmpty()) {
+      // load sample data
+      db.importDeck("english_sample", "data/english.csv").then(function() {
+        app.deck = "english_sample";
+
+        db.nextCard('english_sample').then(function(c) {
+          app.card = c;
+        });
+      });
+    } else {
+
+      db.nextCard('english_sample').then(function(c) {
+        app.card = c;
+      });
+    }
     
   });
   
-  // update and move to next card
-  app.updateAndNext = function() {
+  // update the current and move to the next
+  app.next = function() {
     // Save previous card
-    db.updateInterval(app.card);
-    console.log("card saved!");
+    db.updateInterval(app.card).then(function(e) {
+      console.log("card saved!", app.card);
+    });
 
-    // TODO: slide effect оруулвал зүгээр
+    // TODO: slide effect for next card
 
      //this.$.pages.entryAnimation = "slide-right-animation";
      //this.$.pages.exitAnimation = "flip-out-animation";
      //this.$.pages.selected = 0;
 
-     var c = db.nextCard();
-     if (c) {
-       app.card = c;
-     }
+     // TODO: use current deck ID
+    db.nextCard('english_sample').then(function(c) {
+      app.card = c;
+    });
+  };
 
-     console.log("Next card", c);
-
+  app.refresh = function() {
+    // skip current, show next
+    db.nextCard('english_sample').then(function(c) {
+      app.card = c;
+    });
   };
 
   app.newCard = function() {
     // TODO: add new card
     console.log('add new card');
+  };
+
+  app.remove = function() {
+    // TODO: remove deck completely
   };
 
 })(document);

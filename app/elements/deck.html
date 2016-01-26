@@ -1,5 +1,6 @@
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
 <dom-module id="deck-list">
   <style>
@@ -9,18 +10,21 @@
     li {
       padding: 10px;
     }
-    button {
-      cursor: pointer;
+
+    a {
+      vertical-align: middle;
     }
   </style>
 
   <template>
     <ul>
-      <template is="dom-repeat" items="{{items}}">
+      <template is="dom-repeat" items="{{data}}">
         <li class="layout horizontal">
-          <a href="{{_deckUrl(item.id)}}">{{item.name}}</a>
+          <a href="{{_deckUrl(item.name)}}">{{item.name}}</a>
+          
           <span class="flex"></span>
-          <button>download</button>
+
+          <paper-icon-button  on-click="_remove" icon="clear" data-deck="{{item.name}}"></paper-icon-button>
         </li>
       </template>
     </ul>
@@ -30,25 +34,21 @@
     Polymer({
       is: 'deck-list',
       properties: {
-        items: {
+        data: {
           type: Array,
           notify: true
         },
-      },
-
-      created: function() {
-        console.log('deck-list created: ', new Date());
-      },
-
-      ready: function() {
-        console.log('deck-list ready: ', new Date());
       },
 
       _deckUrl: function(id) {
         return '/decks/' + id;
       },
 
-      _delete: function() {
+      _remove: function(e) {
+        e.preventDefault();
+        console.log("remove deck", e.target.dataDeck);
+        this.fire('remove');
+
         // db.delete(DECK_TABLE, " name = '" + deck + "'", null);
       },
 

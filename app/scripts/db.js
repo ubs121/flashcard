@@ -1,143 +1,164 @@
 /**
  * Copyright 2015 ubs121
+ *  
+ * Data service for Flashcard app
  */
+'use strict';
 
-// Өгөгдлийн үйлчилгээ
-var DataService = function() {
- this.db_ = null;
- this.card_ = null;
- this.cards = new Array();
- this.decks = new Array();
- window.ds = this;
-};
-
-DataService.prototype.connect = function() {
-   var resolver = new Resolver();
-
-   if (this.db_ != null) {
-     resolver.resolve(this.db_);
-   }
-
-   var req = window.indexedDB.open('flashcard', 1);
-
-   req.onsuccess = function(ev) {
-     this.db_ = ev.target.result;
-     resolver.resolve(ev.target.result);
-   }.bind(this);
-
-   req.onerror = function(e) {
-     resolver.reject(e);
-   };
-
-   req.onupgradeneeded = function(ev) {
-     var rawDb = ev.target.result;
-     var mc = rawDb.createObjectStore("card", { keyPath: 'question' });
-     mc.createIndex('ixInterval', 'interval', { unique: false });
-     mc.createIndex('ixDeck', 'deck', { unique: false });
-   };
-
-   return resolver.promise;
-};
-
-// import deck from somewhere
-DataService.prototype.import = function(deckId, csvPath) {
-  console.log('Importing sample data...');
-
-  if (this.db_ == null) {
-      console.log('this.db_ is null !!!');
+class DataService {
+  constructor() {
+    this.db_ = null;
+    this.card_ = null;
+    this.log_ = null;
+    this.schemaBuilder = this._buildSchema();
   }
 
-  fetch(csvPath).then(function(response) {
-    return response.text();
-  }).then(function(csvStr) {
-    this.importCsv(deckId, csvStr);
-    console.log('import is done.');
-  }.bind(this)).catch(function(err) {
-    console.log('Demo data import failed', err);
-  });
-};
-
-// import csv into database
-DataService.prototype.importCsv = function(deckId, csvString) {
-  // create a transaction
-  var trans = this.db_.transaction("card", "readwrite");
-  var storeCard = trans.objectStore("card");
-  trans.oncomplete = function(event) {
-    console.log('importCsv succeeded.');
-  };
-
-  trans.onerror = function(event) {
-    // ignore duplicated error message
-    // console.log('importCsv failed', event);
-  };
-
-  // insert cards
-  var lines = csvString.split(/[\r\n]/);
-  var headerLine = lines[0];
-  var fields = headerLine.split(/[,|;\t]/);
-
-  for (var i = 1; i < lines.length; i++) {
-    var line = lines[i];
-
-    // The csvString that comes from the server has an empty line at the end,
-    // need to ignore it.
-    if (line.length == 0) {
-      continue;
+  // connect to db
+  connect() {
+    if (this.db_ !== null) {
+      return Promise.resolve(this.db_);
     }
-
-    var values = line.split(/[,|;\t]/);
-    var c = {};
-    c.question = values[0];
-    c.answer = values[1];
-    //c.interval = 1.0;
-    c.created = new Date();
-    c.deck = deckId;
-
-    var request = storeCard.add(c);
-  }
-};
-
-DataService.prototype.nextCard = function() {
-  if (this.cards.length == 0) {
-    return {};
+    
+    //var opts = {storeType: lf.schema.DataStoreType.INDEXED_DB};
+    return this.schemaBuilder.connect().then(function(db){
+      this.db_ = db;
+      this.card_ = db.getSchema().table('card');
+      this.log_ = db.getSchema().table('log');
+      return db;
+    }.bind(this));
   }
 
-  // sort cards
-  this.cards.sort(function(a, b) {return (a.interval - b.interval); });
+  _buildSchema() {
+    var schemaBuilder = lf.schema.create('flashcard', 1);
 
-  // pick first, but randomize
-  var firstCard = this.cards[0];
+    schemaBuilder.createTable('card').
+        addColumn('question', lf.Type.STRING).
+        addColumn('answer', lf.Type.STRING).
+        addColumn('created', lf.Type.DATE_TIME).
+        addColumn('deck', lf.Type.STRING).
+        addPrimaryKey(['question']);
 
-  var i=1;
-  while (i<this.cards.length && this.cards[i].interval == firstCard.interval) {
-    i++;
+
+    schemaBuilder.createTable('log').
+        addColumn('question', lf.Type.STRING).
+        addColumn('interval', lf.Type.NUMBER).
+        addColumn('updated', lf.Type.DATE_TIME).
+        addPrimaryKey(['question']).
+        addIndex('idxInterval', ['interval'], false, lf.Order.ASC);
+
+    console.log('_buildSchema succeeded !');
+
+    return schemaBuilder;
   }
 
-  //
-  // Math.floor((Math.random() * rs.length - 1) + 1);
-};
+  getDecks() {
+    return this.db_
+      .select(lf.fn.distinct(this.card_.deck).as('name'))
+      .from(this.card_)
+      .exec();
+  }
 
-DataService.prototype.updateInterval = function(c) {
-  // interval талбарт оноосон утгыг баазад хадгалах
-};
+  nextCard(deckId) {
+    var c = this.card_;
+    var l = this.log_;
 
-// check if data exists
-DataService.prototype.dataExists = function()  {
-    return false;
-};
+    return this.db_
+      .select(c.question.as('question'), c.answer.as('answer'), c.deck.as('deck'), l.interval.as('interval'))
+      .from(c)
+      .leftOuterJoin(l, l.question.eq(c.question))
+      .where(c.deck.eq(deckId))
+      .orderBy(this.log_.interval)
+      .limit(30)
+      .exec()
+        .then(function(rs) {
 
+            if (rs.length > 0) {
+              // FIXME: choose random index
+              var i = Math.floor((Math.random() * rs.length - 1) + 1);
+              
+              var card = {};
+              card.question = rs[i].question;
+              card.answer = rs[i].answer;
+              card.interval = rs[i].interval;
+              card.created = rs[i].created;
+              card.deck = rs[i].deck;
 
-/** @constructor */
-var Resolver = function() {
- /** @type {!Function} */
- this.resolve;
+              return card;
+            } else {
+              return {};
+            }
+          });
+  }
 
- /** @type {!Function} */
- this.reject;
+  updateInterval(c) {
+    return this.db_.
+      update(this.log_).
+      set(this.log_.interval, c.interval).
+      where(this.log_.question.eq(c.question)).
+      exec();
+  }
 
- /** @type {!Promise} */
- this.promise = new Promise((function(res, rej) {
-   this.resolve = res;
-   this.reject = rej;
- }).bind(this));
-};
+  // import deck (cards) from the given path into database
+  importDeck(deckId, filePath) {
+    var that = this;
+    
+    return fetch(filePath).then(function(response) {
+      return response.text();
+    }).then(function(csvText) {
+      var lines = csvText.split(/[\n\r]/);
+      
+      var cardObjects = [];
+      var intervalObjects = [];
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+
+        // The csvText that comes from the server has an empty line at the end,
+        // need to ignore it.
+        if (line.length == 0) {
+          continue;
+        }
+
+        var values = line.split(/[,;\|\t]/);
+
+        if (values[0] !== '' ) {
+          var obj = {};
+          // TODO: support image cards
+          obj.question = values[0];
+          obj.answer = values[1] || '';
+          obj.created = new Date();
+          obj.deck = deckId;
+
+          cardObjects.push(that.card_.createRow(obj));
+
+          var io = {};
+          io.question = obj.question;
+          io.updated = new Date();
+          io.interval = 1;
+
+          intervalObjects.push(that.log_.createRow(io));
+        }
+      }
+
+      // insert placeholder for intervals
+      that.db_.
+        insert().
+        into(that.log_).
+        values(intervalObjects).exec();
+
+      return that.db_.
+        insertOrReplace().
+        into(that.card_).
+        values(cardObjects).exec();
+    }).
+    catch(function(err) {
+      console.log("Import failed! ", err);
+    });
+    
+  }
+
+  isEmpty() {
+    // TODO: implement it
+    return true;
+  }
+}

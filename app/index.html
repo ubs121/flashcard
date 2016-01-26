@@ -95,8 +95,8 @@ Copyright (c) 2015 ubs121
           <span class="space"></span>
 
           <!-- Toolbar icons -->
-          <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="add" on-click="newCard"></paper-icon-button>
+          <paper-icon-button icon="refresh" on-tap="refresh" title="Refresh"></paper-icon-button>
+          <paper-icon-button icon="add" on-tap="newCard" title="New card or deck"></paper-icon-button>
 
           <!-- Application name -->
           <div class="middle middle-container">
@@ -105,7 +105,7 @@ Copyright (c) 2015 ubs121
 
           <!-- Application sub title -->
           <div class="bottom bottom-container">
-            <div class="bottom-title">The future of the web today</div>
+            <div class="bottom-title">makes remembering things easy</div>
           </div>
         </paper-toolbar>
 
@@ -113,7 +113,7 @@ Copyright (c) 2015 ubs121
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
           
-            <section data-route="home" on-next="updateAndNext">
+            <section data-route="home" on-next="next">
               <flash-card card="{{card}}"></flash-card>
             </section>
 
@@ -123,21 +123,19 @@ Copyright (c) 2015 ubs121
 
             <section data-route="help">
                 <h2 class="page-title">Card</h2>
-                <p>A Card has two side: question and answer. </p>
-                <p>When card is shown, you try to remember the anwser, then flip the card to see the actual answer. If you remember correctly hit 'happy' button, if not hit 'sad' button. Be honest to yourself.</p>
+                <p>A Card has two sides: Question (front) and Answer (back). </p>
+                <p>When card is shown, you try to remember the anwser, then flip the card (by tapping) to see the answer. If you remember correctly hit 'correct' button, if couldn't hit 'wrong' button. Be honest to yourself.</p>
 
                 <h2 class="page-title">Deck</h2>
                 <p>Deck is a collection of cards. </p>
-                <p>You can add deck from other sources. The only requirement is the content should be pipe (|) separated question, answers. </p>
-                <p>For example: </p>
+                <p>To add deck you can drag and drop a file link on the deck list, or use plus (+) button from the toolbar. You can add a deck from any location. The only requirement is the content (questions and answers) should be pipe (|) separated. </p>
+                <p>For example, the content of "data/english.csv" is shown below: </p>
                 <pre>
-  Hello|Сайн байна уу
-  Goodbye|Баяртай
-  Welcome|Тавтай морил
-  wiki.mn/mn_flag.svg|Flag of Mongolia
+Cash or charge|Бэлнээр үү, картаар уу
+Catch you later|Дараа уулзая
+Certainly|Яг тийм
                 </pre>
-
-                To add deck you can drag and drop a link, or use plus (+) button from the toolbar.
+                <p>Also you can use image cards with proper markup.</p>
             </section>
           </iron-pages>
         </div>
@@ -169,6 +167,7 @@ Copyright (c) 2015 ubs121
   </template>
 
   <!-- build:js scripts/app.js -->
+  <script src="bower_components/lovefield/dist/lovefield.min.js"></script>
   <script src="scripts/db.js"></script>
   <script src="scripts/app.js"></script>
   <!-- endbuild-->
