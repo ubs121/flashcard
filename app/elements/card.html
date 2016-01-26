@@ -1,6 +1,6 @@
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animatable.html">
@@ -27,28 +27,46 @@
     left: 10px;
     bottom: 10px;
     right: 10px;
-    @apply(--shadow-elevation-2dp);
+    vertical-align: middle;
+    text-align: center;
+    @apply(--shadow-elevation-3dp);
   }
 
   #front {
     width: 100%;
-    height: 100%
+    height: 100%;
+    vertical-align: middle;
+    line-height: 300px;
+    text-align: center;
     cursor: pointer;
+    background: #C5E1A5;
+
   }
 
   #back {
     width: 100%;
     height: 100%;
-    background: silver;
+    vertical-align: middle;
+    line-height: 300px;
+    text-align: center;
+    background: #B3E5FC;
+  }
+
+  #correct {
+    color: #4CAF50;
+  }
+
+  #wrong {
+    color: #F44336;
   }
 </style>
 
 <template>
     <div class="layout vertical" >
       <div class="layout horizontal" style="margin: 10px">
-        <paper-button raised on-tap="_reset">:-(</paper-button>
-        <div class="flex"></div>
-        <paper-button raised on-tap="_space">:-)</paper-button>
+        <paper-icon-button  id="wrong" raised on-tap="_reset" icon="clear">:-(</paper-icon-button>
+        <div class="flex"><img src="/images/moving_eyes.gif" style='height: 45px;'></div>
+        <paper-icon-button id="correct" raised on-tap="_space" icon="check">:-)</paper-icon-button>
       </div>
 
       <!-- card flip -->
@@ -60,9 +78,6 @@
             <div id="back">back</div>
         </neon-animatable>
       </neon-animated-pages>
-
-      <!-- response buttons -->
-      
     </div>
 </template>
 
