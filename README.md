@@ -39,6 +39,7 @@ $ appcfg.py -A flashcard-121 update flashcard/
 https://flashcard-121.appspot.com/
 
 ## TODO
+- create, edit icons
 - check if data exists
 - set current deck ID
 - use tilt motion to flip
