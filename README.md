@@ -45,3 +45,5 @@ https://flashcard-121.appspot.com/
 - import deck from Internet, drag and drop support
 - add, edit cards manually
 - add to home screen
+- excersize notification (use push?)
+- export log/result
