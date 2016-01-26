@@ -1,22 +1,20 @@
 # Flashcard
 
-Flashcard is a web app which makes remembering things easy.  It uses a very simple spaced repetition algorithm.
-
-It's a progressive web app that uses latest web technologies.
+Flashcard is a progressive web app which makes remembering things easy.  It uses a very simple spaced repetition algorithm.
 
 ## Used technologies
 
 This web app uses several modern web technologies:
 
 * Progressive Web App
-* Web components, Polymer Starter Kit
-* Lovefield Query engine
-* IndexedDB
+* Service Worker, offline support
+* Web components
+* Polymer Starter Kit
+* IndexedDB by Lovefield
 * 3D CSS animation
-* Service Worker
-* Push Notification
+* Push Notification (HTTP long polling)
 * Google App Engine
-* ES6 using Babel.js
+* ES6 by Babel.js
 
 ## Requirement
 
@@ -41,5 +39,9 @@ $ appcfg.py -A flashcard-121 update flashcard/
 https://flashcard-121.appspot.com/
 
 ## TODO
-- use native indexeddb OR SampleDB
+- check if data exists
+- set current deck ID
+- use tilt motion to flip
+- import deck from Internet, drag and drop support
 - add, edit cards manually
+- add to home screen
