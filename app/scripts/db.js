@@ -91,9 +91,10 @@ class DataService {
   }
 
   updateInterval(c) {
-    return this.db_.
+    this.db_.
       update(this.log_).
       set(this.log_.interval, c.interval).
+      set(this.log_.updated, new Date()).
       where(this.log_.question.eq(c.question)).
       exec();
   }

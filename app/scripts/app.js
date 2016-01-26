@@ -103,9 +103,7 @@ Copyright (c) 2015 ubs121
   // update the current and move to the next
   app.next = function() {
     // Save previous card
-    db.updateInterval(app.card).then(function(e) {
-      console.log("card saved!", app.card);
-    });
+    db.updateInterval(app.card);
 
     // TODO: slide effect for next card
 
