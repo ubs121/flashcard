@@ -105,12 +105,6 @@ Copyright (c) 2015 ubs121
     // Save previous card
     db.updateInterval(app.card);
 
-    // TODO: slide effect for next card
-
-     //this.$.pages.entryAnimation = "slide-right-animation";
-     //this.$.pages.exitAnimation = "flip-out-animation";
-     //this.$.pages.selected = 0;
-
      // TODO: use current deck ID
     db.nextCard('english_sample').then(function(c) {
       app.card = c;

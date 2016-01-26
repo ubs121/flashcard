@@ -40,7 +40,6 @@
     text-align: center;
     cursor: pointer;
     background: #C5E1A5;
-
   }
 
   #back {
@@ -65,7 +64,7 @@
     <div class="layout vertical" >
       <div class="layout horizontal" style="margin: 10px">
         <paper-icon-button  id="wrong" on-tap="_reset" icon="block"></paper-icon-button>
-        <div class="flex"><img src="/images/moving_eyes.gif" style='height: 45px;'></div>
+        <div class="flex"><img id="eye" ></div>
         <paper-icon-button id="correct" on-tap="_space" icon="check"></paper-icon-button>
       </div>
 
@@ -96,16 +95,30 @@
 
       ready: function() {
         this.$.pages.selected = 0;
+
+        var imgEye = this.$.eye;
+        this.timer = setTimeout(function() {
+          imgEye.style.height = '30px';
+          imgEye.src = "/images/eyes.gif";
+        }, 5000);
       },
 
       _cardChanged: function(e) {
         this.$.front.innerText = this.card.question || "no data";
         this.$.back.innerText = "";
         this.$.pages.selected = 0;
+
+        // TODO: slide effect for next card
+
+        //this.$.pages.entryAnimation = "slide-right-animation";
+        //this.$.pages.exitAnimation = "flip-out-animation";
+        //this.$.pages.selected = 0;
       },
 
       _flip: function(e) {
         e.preventDefault();
+
+        this._resetTimer();
 
         this.$.pages.entryAnimation = "flip-in-animation";
         this.$.pages.exitAnimation = "flip-out-animation";
@@ -144,6 +157,18 @@
         }
 
         this.fire('next');
+      },
+
+      _resetTimer: function() {
+          var imgEye = this.$.eye;
+          clearTimeout(this.timer);
+          imgEye.src = "";
+          imgEye.style.height = '';
+
+          this.timer = setTimeout(function() {
+            imgEye.style.height = '30px';
+            imgEye.src = "/images/eyes.gif";
+          }, 10000);
       }
 
 
