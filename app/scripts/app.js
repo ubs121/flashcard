@@ -82,23 +82,26 @@ Copyright (c) 2015 ubs121
       app.decks = rs;
     });
 
-    if (db.isEmpty()) {
+    if (localStorage.deck) {
+      app.changeDeck(localStorage.deck);
+    } else {
       // load sample data
       db.importDeck("english_sample", "data/english.csv").then(function() {
-        app.deck = "english_sample";
-
-        db.nextCard('english_sample').then(function(c) {
-          app.card = c;
-        });
-      });
-    } else {
-
-      db.nextCard('english_sample').then(function(c) {
-        app.card = c;
-      });
+          app.changeDeck("english_sample");
+      });      
     }
-    
+
   });
+
+  // change deck
+  app.changeDeck = function(deckId) {
+    app.deck = deckId;
+    localStorage.setItem("deck", deckId);
+
+    db.nextCard(deckId).then(function(c) {
+      app.card = c;
+    });
+  };
   
   // update the current and move to the next
   app.next = function() {

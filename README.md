@@ -39,11 +39,8 @@ $ appcfg.py -A flashcard-121 update flashcard/
 https://flashcard-121.appspot.com/
 
 ## TODO
-- create, edit icons
-- check if data exists
-- set current deck ID
-- use tilt motion to flip
 - import deck from Internet, drag and drop support
+- use tilt motion to flip
 - add, edit cards manually
 - add to home screen
 - excersize notification (use push?)

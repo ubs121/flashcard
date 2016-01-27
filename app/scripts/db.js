@@ -70,24 +70,24 @@ class DataService {
       .orderBy(this.log_.interval)
       .limit(30)
       .exec()
-        .then(function(rs) {
+      .then(function(rs) {
 
-            if (rs.length > 0) {
-              // FIXME: choose random index
-              var i = Math.floor((Math.random() * rs.length - 1) + 1);
-              
-              var card = {};
-              card.question = rs[i].question;
-              card.answer = rs[i].answer;
-              card.interval = rs[i].interval;
-              card.created = rs[i].created;
-              card.deck = rs[i].deck;
+          if (rs.length > 0) {
+            // FIXME: choose random index
+            var i = Math.floor((Math.random() * rs.length - 1) + 1);
+            
+            var card = {};
+            card.question = rs[i].question;
+            card.answer = rs[i].answer;
+            card.interval = rs[i].interval;
+            card.created = rs[i].created;
+            card.deck = rs[i].deck;
 
-              return card;
-            } else {
-              return {};
-            }
-          });
+            return card;
+          } else {
+            return {};
+          }
+      });
   }
 
   updateInterval(c) {
@@ -156,10 +156,5 @@ class DataService {
       console.log("Import failed! ", err);
     });
     
-  }
-
-  isEmpty() {
-    // TODO: implement it
-    return true;
   }
 }
