@@ -65,7 +65,7 @@
     <div class="layout vertical" >
       <div class="layout horizontal" style="margin: 10px">
         <paper-icon-button  id="wrong" on-tap="_reset" icon="block"></paper-icon-button>
-        <div class="flex"><img id="eye" ></div>
+        <div class="flex"><img id="eye" src="/images/eyes.png" style='height: 30px;' alt="eye"></div>
         <paper-icon-button id="correct" on-tap="_space" icon="check"></paper-icon-button>
       </div>
 
@@ -99,9 +99,8 @@
 
         var imgEye = this.$.eye;
         this.timer = setTimeout(function() {
-          imgEye.style.height = '30px';
           imgEye.src = "/images/eyes.gif";
-        }, 5000);
+        }, 7000);
       },
 
       _cardChanged: function(e) {
@@ -119,7 +118,7 @@
       _flip: function(e) {
         e.preventDefault();
 
-        this._resetTimer();
+        this.eyeControl();
 
         this.$.pages.entryAnimation = "flip-in-animation";
         this.$.pages.exitAnimation = "flip-out-animation";
@@ -132,11 +131,11 @@
         }
       },
 
+      // hard to remember
       _reset: function(e) {
         e.preventDefault();
         e.stopPropagation();
         
-        // Цээжлээгүй бол интервалыг шинэчилэн давтах
         if (this.card.interval) {
           this.card.interval = 1.01 * this.card.interval;
         } else {
@@ -146,11 +145,11 @@
         this.fire('next');
       },
 
+      // easy to remember
       _space: function(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        // Very basic spaced repetition.
         if (this.card.interval) {
            this.card.interval = 2 * this.card.interval;
         } else {
@@ -160,16 +159,15 @@
         this.fire('next');
       },
 
-      _resetTimer: function() {
+      // for fun and guiding
+      eyeControl: function() {
           var imgEye = this.$.eye;
           clearTimeout(this.timer);
-          imgEye.src = "";
-          imgEye.style.height = '';
+          imgEye.src = "/images/eyes.png";
 
           this.timer = setTimeout(function() {
-            imgEye.style.height = '30px';
             imgEye.src = "/images/eyes.gif";
-          }, 10000);
+          }, 11000);
       }
 
 
