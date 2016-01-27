@@ -58,6 +58,7 @@ class DataService {
       .exec();
   }
 
+  // calculate next card
   nextCard(deckId) {
     var c = this.card_;
     var l = this.log_;
@@ -103,7 +104,7 @@ class DataService {
   importDeck(deckId, filePath) {
     var that = this;
     
-    return fetch(filePath).then(function(response) {
+    return fetch(filePath, {mode: 'no-cors'}).then(function(response) {
       return response.text();
     }).then(function(csvText) {
       var lines = csvText.split(/[\n\r]/);
@@ -122,7 +123,7 @@ class DataService {
 
         var values = line.split(/[,;\|\t]/);
 
-        if (values[0] !== '' ) {
+        if (values.length > 1) {
           var obj = {};
           // TODO: support image cards
           obj.question = values[0];
@@ -141,7 +142,7 @@ class DataService {
         }
       }
 
-      // insert placeholder for intervals
+      // insert placeholder rows for intervals
       that.db_.
         insert().
         into(that.log_).
@@ -151,9 +152,6 @@ class DataService {
         insertOrReplace().
         into(that.card_).
         values(cardObjects).exec();
-    }).
-    catch(function(err) {
-      console.log("Import failed! ", err);
     });
     
   }

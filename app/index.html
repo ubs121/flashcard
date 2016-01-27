@@ -96,7 +96,7 @@ Copyright (c) 2015 ubs121
 
           <!-- Toolbar icons -->
           <paper-icon-button icon="refresh" on-tap="refresh" title="Refresh"></paper-icon-button>
-          <paper-icon-button icon="add" on-tap="newCard" title="New card or deck"></paper-icon-button>
+          <paper-icon-button icon="add" on-tap="add" title="New card or deck"></paper-icon-button>
 
           <!-- Application name -->
           <div class="middle middle-container">
@@ -127,8 +127,8 @@ Copyright (c) 2015 ubs121
                 <p>When card is shown, you try to remember the anwser, then flip the card (by tapping) to see the answer. If you remember correctly hit 'correct' button, if couldn't hit 'wrong' button. Be honest to yourself.</p>
 
                 <h2 class="page-title">Deck</h2>
-                <p>Deck is a collection of cards. </p>
-                <p>To add deck you can drag and drop a file link on the deck list, or use plus (+) button from the toolbar. You can add a deck from any location. The only requirement is the content (questions and answers) should be pipe (|) separated. </p>
+                <p>Deck is a group of cards. </p>
+                <p>To add deck you can drag and drop a file link on the deck list, or use plus (+) button from the toolbar. You can import a deck from any location. The only requirement is the content (questions and answers) should be pipe (|) separated. </p>
                 <p>For example, the content of "data/english.csv" is shown below: </p>
                 <pre>
 Cash or charge|Бэлнээр үү, картаар уу
@@ -145,6 +145,28 @@ Certainly|Яг тийм
     <paper-toast id="toast">
       <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
     </paper-toast>
+
+    <!-- import dialog -->
+    <paper-dialog id="dlgImport" modal>
+      <h2>Import deck</h2>
+      
+      <div>
+          <paper-input id="inputDeckName" label="Deck name" value="{{inputDeckName}}" required="true" autofocus auto-validate error-message="Deck name is required!">
+          </paper-input>
+
+          <paper-input-container required auto-validate>
+            <label for="inputDeckURL">File URL</label>
+            <input is="iron-input" id="inputDeckURL" type="url" bind-value="{{inputDeckURL}}"required auto-validate>
+            <paper-input-error>URL required and should be valid</paper-input-error>
+          </paper-input-container>
+
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm on-tap="importDeck">Accept</paper-button>
+      </div>
+    </paper-dialog>
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
     <!--

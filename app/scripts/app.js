@@ -115,15 +115,51 @@ Copyright (c) 2015 ubs121
   };
 
   app.refresh = function() {
-    // skip current, show next
-    db.nextCard('english_sample').then(function(c) {
-      app.card = c;
-    });
+    if (app.route == 'home') {
+      // skip current, show next
+      db.nextCard('english_sample').then(function(c) {
+        app.card = c;
+      });
+    } else if (app.route == 'decks') {
+      db.getDecks().then(function(rs) {
+        app.decks = rs;
+      });
+    }
   };
 
-  app.newCard = function() {
-    // TODO: add new card
-    console.log('add new card');
+  app.add = function() {
+    if (app.route == 'home') {
+      console.log('add new card');
+    } else if (app.route == 'decks') {
+      this.$.dlgImport.open();
+    }
+  };
+
+  app.importDeck = function(e) {
+    var that = this;
+    console.log(app.inputDeckName, app.inputDeckURL);
+
+    // TODO: validate URL
+    if (!app.inputDeckURL.startsWith('http')) {
+      that.$.toast.text = "Invalid URL!";
+      that.$.toast.show();
+      return;
+    }
+
+    db.importDeck(app.inputDeckName, app.inputDeckURL).then(function() {
+      app.refresh();
+
+      that.$.toast.text = "Successfully imported!";
+      that.$.toast.show();
+    }).catch(function(err) {
+      that.$.toast.text = "Import failed! " + err;
+      that.$.toast.show();
+    });
+
+    // clear
+    app.inputDeckName = "";
+    app.inputDeckURL = "";
+
   };
 
   app.remove = function() {
