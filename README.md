@@ -1,10 +1,37 @@
 # Flashcard
 
-Flashcard is a progressive web app which makes remembering things easy.  It uses a very simple spaced repetition algorithm.
+Flashcard is a progressive web app which makes remembering things easy. It uses a very simple spaced repetition algorithm.
+
+## Deploy on appengine
+
+```sh
+$ appcfg.py -A flashcard-121 update flashcard/
+```
+
+## Demo
+
+https://flashcard-121.appspot.com/
+
+## How to create a new deck
+
+Deck is a group of cards. You can create a deck file using the following format (question|answer).
+
+```
+Cash or charge|Бэлнээр үү, картаар уу
+Catch you later|Дараа уулзая
+Certainly|Яг тийм
+```
+
+And put this file on some storage. For example, Google Drive could be used for this purpose. 
+
+After that copy the URL and import into the app using plus button (+) inside the deck list.
+
+Happy learning!
+
 
 ## Used technologies
 
-This web app uses several modern web technologies:
+This web app uses the latest web technologies:
 
 * Progressive Web App
 * Service Worker, offline support
@@ -28,20 +55,12 @@ This web app uses several modern web technologies:
 * **App delivery** - App includes a build process. Assets are minimized and concatenated as appropriate.
 
 
-## Deploy on appengine
-
-```sh
-$ appcfg.py -A flashcard-121 update flashcard/
-```
-
-## Demo
-
-https://flashcard-121.appspot.com/
-
 ## TODO
-- import deck from Internet, drag and drop support
 - use tilt motion to flip
-- add, edit cards manually
 - add to home screen
 - excersize notification (use push?)
-- export log/result
+- Test on Firefox
+
+## Roadmap
+
+- Support Anki package format (*.apkg)
