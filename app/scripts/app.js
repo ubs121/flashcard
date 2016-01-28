@@ -78,20 +78,22 @@ Copyright (c) 2015 ubs121
   db.connect().then(function() {
     console.log('Database Connected.');
 
-    db.getDecks().then(function(rs) {
-      app.decks = rs;
-    });
-
-    if (localStorage.deck) {
+    if (localStorage.deck) { // FIXME: баазын бичлэгийг тоолж шалгах
       app.changeDeck(localStorage.deck);
     } else {
       // load sample data
-      db.importDeck("english_sample", "data/english.csv").then(function() {
-          app.changeDeck("english_sample");
+      db.importDeck("English Sample", "data/english.csv").then(function() {
+          app.changeDeck("English Sample");
       });      
     }
 
   });
+
+  app.showDecks = function() {
+    db.getDecks().then(function(rs) {
+      app.decks = rs;
+    });
+  };
 
   // change deck
   app.changeDeck = function(deckId) {
@@ -109,9 +111,11 @@ Copyright (c) 2015 ubs121
     db.updateInterval(app.card);
 
      // TODO: use current deck ID
-    db.nextCard('english_sample').then(function(c) {
+    db.nextCard('English Sample').then(function(c) {
       app.card = c;
     });
+
+    // TODO: setTimeout and show notification for exercise !
   };
 
   app.refresh = function() {
@@ -135,11 +139,12 @@ Copyright (c) 2015 ubs121
     }
   };
 
+  // FIXME: хуучин deck name дараад байна !!!
   app.importDeck = function(e) {
     var that = this;
+
     console.log(app.inputDeckName, app.inputDeckURL);
 
-    // TODO: validate URL
     if (!app.inputDeckURL.startsWith('http')) {
       that.$.toast.text = "Invalid URL!";
       that.$.toast.show();
@@ -148,7 +153,6 @@ Copyright (c) 2015 ubs121
 
     db.importDeck(app.inputDeckName, app.inputDeckURL).then(function() {
       app.refresh();
-
       that.$.toast.text = "Successfully imported!";
       that.$.toast.show();
     }).catch(function(err) {
@@ -164,6 +168,16 @@ Copyright (c) 2015 ubs121
 
   app.remove = function() {
     // TODO: remove deck completely
+  };
+
+  app.showNotification = function(title, body, icon) {
+      if (window.Notification && Notification.permission !== "denied") {
+        Notification.requestPermission(function(status) { 
+          var n = new Notification(title, { body: body, icon: icon}); 
+        });
+      } else {
+        alert('Your browser doesn\'t support notifications.');
+      }
   };
 
 })(document);

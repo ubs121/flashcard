@@ -155,4 +155,8 @@ class DataService {
     });
     
   }
+
+  removeDeck(deckId) {
+    
+  }
 }
