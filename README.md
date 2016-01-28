@@ -34,12 +34,14 @@ Happy learning!
 This web app uses the latest web technologies:
 
 * Progressive Web App
-* Service Worker, offline support
+* Service Worker, Offline support
 * Web components
 * Polymer Starter Kit
 * IndexedDB by Lovefield
 * 3D CSS animation
-* Push Notification (HTTP long polling)
+* Web Notification
+* Device sensor (tilt)
+* Add to home screen
 * Google App Engine
 * ES6 by Babel.js
 
