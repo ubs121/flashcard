@@ -157,6 +157,10 @@ class DataService {
   }
 
   removeDeck(deckId) {
-    
+    return this.db_.
+      delete().
+      from(this.card_).
+      where(this.card_.deck.eq(deckId)).
+      exec();
   }
 }

@@ -111,7 +111,7 @@ Copyright (c) 2015 ubs121
     db.updateInterval(app.card);
 
      // TODO: use current deck ID
-    db.nextCard('English Sample').then(function(c) {
+    db.nextCard(app.deck).then(function(c) {
       app.card = c;
     });
 
@@ -121,7 +121,7 @@ Copyright (c) 2015 ubs121
   app.refresh = function() {
     if (app.route == 'home') {
       // skip current, show next
-      db.nextCard('english_sample').then(function(c) {
+      db.nextCard(app.deck).then(function(c) {
         app.card = c;
       });
     } else if (app.route == 'decks') {
@@ -166,8 +166,8 @@ Copyright (c) 2015 ubs121
 
   };
 
-  app.remove = function() {
-    // TODO: remove deck completely
+  app.remove = function(e) {
+    db.removeDeck(e.detail.deck);
   };
 
   app.showNotification = function(title, body, icon) {

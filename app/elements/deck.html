@@ -46,14 +46,11 @@
 
       _remove: function(e) {
         e.preventDefault();
-        console.log("remove deck", e.target.dataDeck);
-        this.fire('remove');
-
-        // db.delete(DECK_TABLE, " name = '" + deck + "'", null);
+        this.fire('remove', {deck: e.target.dataDeck});
       },
 
       _rename: function() {
-        // db.update(DECK_TABLE, values, "name='" + oldName + "'", null);
+        // TODO: implement renaming
       }
 
     });
