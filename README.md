@@ -61,7 +61,6 @@ This web app uses the latest web technologies:
 - use tilt motion to flip
 - add to home screen
 - excersize notification (use push?)
-- Test on Firefox
 
 ## Roadmap
 
