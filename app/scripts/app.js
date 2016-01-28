@@ -110,7 +110,6 @@ Copyright (c) 2015 ubs121
     // Save previous card
     db.updateInterval(app.card);
 
-     // TODO: use current deck ID
     db.nextCard(app.deck).then(function(c) {
       app.card = c;
     });
