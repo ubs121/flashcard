@@ -34,23 +34,12 @@ var AUTOPREFIXER_BROWSERS = [
   'bb >= 10'
 ];
 
-gulp.task('js', function () {
- return gulp.src(['app/**/*.{js,html}', '!app/bower_components/**/*'])
-    .pipe($.sourcemaps.init())
-    .pipe($.if('*.html', $.crisper({scriptInHead:false}))) // Extract JS from .html files
-    .pipe($.if('*.js', $.babel({
-      presets: ['es2015']
-    })))
-    .pipe($.sourcemaps.write('.'))
-    .pipe(gulp.dest('.tmp/'))
-    .pipe(gulp.dest(dist()));
-});
-
 var DIST = 'dist';
 
 var dist = function(subpath) {
   return !subpath ? DIST : path.join(DIST, subpath);
 };
+
 
 var styleTask = function(stylesPath, srcs) {
   return gulp.src(srcs.map(function(src) {
@@ -119,6 +108,19 @@ gulp.task('ensureFiles', function(cb) {
   ensureFiles(requiredFiles.map(function(p) {
     return path.join(__dirname, p);
   }), cb);
+});
+
+
+gulp.task('js', function () {
+ return gulp.src(['app/**/*.{js,html}', '!app/bower_components/**/*'])
+    .pipe($.sourcemaps.init())
+    .pipe($.if('*.html', $.crisper({scriptInHead:false}))) // Extract JS from .html files
+    .pipe($.if('*.js', $.babel({
+      presets: ['es2015']
+    })))
+    .pipe($.sourcemaps.write('.'))
+    .pipe(gulp.dest('.tmp/'))
+    .pipe(gulp.dest(dist()));
 });
 
 // Lint JavaScript
@@ -219,6 +221,7 @@ gulp.task('cache-config', function(callback) {
     'index.html',
     './',
     'bower_components/webcomponentsjs/webcomponents-lite.min.js',
+    'bower_components/lovefield/dist/lovefield.min.js',
     '{elements,scripts,styles}/**/*.*'],
     {cwd: dir}, function(error, files) {
     if (error) {
@@ -304,7 +307,7 @@ gulp.task('default', ['clean'], function(cb) {
     ['copy', 'styles'],
     ['elements', 'js'],
     ['lint', 'images', 'fonts', 'html'],
-    'vulcanize', // 'cache-config',
+    'vulcanize', 'cache-config',
     cb);
 });
 
