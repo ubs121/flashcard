@@ -72,22 +72,21 @@ class DataService {
       .limit(30)
       .exec()
       .then(function(rs) {
-
-          if (rs.length > 0) {
-            // FIXME: choose random index
-            var i = Math.floor((Math.random() * rs.length - 1) + 1);
+        if (rs.length > 0) {
+          // FIXME: choose random index
+          var i = Math.floor((Math.random() * rs.length - 1) + 1);
             
-            var card = {};
-            card.question = rs[i].question;
-            card.answer = rs[i].answer;
-            card.interval = rs[i].interval;
-            card.created = rs[i].created;
-            card.deck = rs[i].deck;
+          var card = {};
+          card.question = rs[i].question;
+          card.answer = rs[i].answer;
+          card.interval = rs[i].interval;
+          card.created = rs[i].created;
+          card.deck = rs[i].deck;
 
-            return card;
-          } else {
-            return {};
-          }
+          return card;
+        } else {
+          return {};
+        }
       });
   }
 
@@ -107,7 +106,7 @@ class DataService {
     return fetch(filePath, {mode: 'no-cors'}).then(function(response) {
       return response.text();
     }).then(function(csvText) {
-      var lines = csvText.split(/[\n\r]/);
+      var lines = csvText.split('|');
       
       var cardObjects = [];
       var intervalObjects = [];
@@ -121,7 +120,7 @@ class DataService {
           continue;
         }
 
-        var values = line.split(/[,;\|\t]/);
+        var values = line.split(/[;\t]/);
 
         if (values.length > 1) {
           var obj = {};

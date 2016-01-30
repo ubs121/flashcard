@@ -124,16 +124,16 @@ Copyright (c) 2015 ubs121
             <section data-route="help">
                 <h2 class="page-title">Card</h2>
                 <p>A Card has two sides: Question (front) and Answer (back). </p>
-                <p>When card is shown, you try to remember the anwser, then flip the card (by tapping) to see the answer. If you remember correctly hit 'correct' button, if couldn't hit 'wrong' button. Be honest to yourself.</p>
+                <p>When card is shown, you try to remember the anwser, then flip the card (by tapping) to see the answer. If you remember correctly hit 'check' button, otherwise hit the 'wrong' button. Be honest to yourself !</p>
 
                 <h2 class="page-title">Deck</h2>
                 <p>Deck is a group of cards. </p>
-                <p>To add deck you can drag and drop a file link on the deck list, or use plus (+) button from the toolbar. You can import a deck from any location. The only requirement is the content (questions and answers) should be pipe (|) separated. </p>
+                <p>To add deck use plus (+) button from the toolbar. You can import a deck from any location (like cram.dom). The content (question and answer) should be seperated by semicolon (;), and cards should be seperated by pipe (|). </p>
                 <p>For example, the content of "data/english.csv" is shown below: </p>
                 <pre>
-Cash or charge|Бэлнээр үү, картаар уу
-Catch you later|Дараа уулзая
-Certainly|Яг тийм
+Cash or charge;Бэлнээр үү, картаар уу?|
+Catch you later;Дараа уулзая|
+Certainly;Яг тийм|
                 </pre>
                 <p>Also you can use image cards with proper markup.</p>
             </section>
@@ -164,12 +164,11 @@ Certainly|Яг тийм
 
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm on-tap="importDeck">Accept</paper-button>
+        <paper-button dialog-confirm on-tap="importDeck">Import</paper-button>
       </div>
     </paper-dialog>
 
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
-    <!--
     <paper-toast id="caching-complete"
                  duration="6000"
                  text="Caching complete! This app will work offline.">
@@ -184,7 +183,6 @@ Certainly|Яг тийм
                          cache-config-file="cache-config.json">
       </platinum-sw-cache>
     </platinum-sw-register>
-    -->
 
   </template>
 

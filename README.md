@@ -17,9 +17,9 @@ https://flashcard-121.appspot.com/
 Deck is a group of cards. You can create a deck file using the following format (question|answer).
 
 ```
-Cash or charge|Бэлнээр үү, картаар уу
-Catch you later|Дараа уулзая
-Certainly|Яг тийм
+Cash or charge;Бэлнээр үү, картаар уу|
+Catch you later;Дараа уулзая|
+Certainly;Яг тийм|
 ```
 
 And put this file on some storage. For example, Google Drive could be used for this purpose. 
@@ -58,9 +58,9 @@ This web app uses the latest web technologies:
 
 
 ## TODO
+- deploy to app engine
 - use tilt motion to flip
-- add to home screen
-- offline support
+- support cards with image
 
 ## Known bugs
 
