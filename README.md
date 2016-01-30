@@ -2,15 +2,28 @@
 
 Flashcard is a progressive web app which makes remembering things easy. It uses a very simple spaced repetition algorithm.
 
-## Deploy on appengine
+
+## How ro run locally
+
+Install node.js, gulp and bower.
 
 ```sh
-$ appcfg.py -A flashcard-121 update flashcard/
+$ npm install
+$ bower install
+$ npm install -g gulp
 ```
 
-## Demo
+And serve up a with gulp.
 
-https://flashcard-121.appspot.com/
+```sh
+$ gulp serve
+```
+
+Type in the url bar:
+
+```
+http://localhost:5080
+```
 
 ## How to create a new deck
 
