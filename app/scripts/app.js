@@ -82,7 +82,7 @@ Copyright (c) 2015 ubs121
       app.changeDeck(localStorage.deck);
     } else {
       // load sample data
-      db.importDeck("English Sample", "data/english.csv").then(function() {
+      db.importDeck('English Sample', 'data/english.csv').then(function() {
           app.changeDeck("English Sample");
       });      
     }
@@ -98,7 +98,7 @@ Copyright (c) 2015 ubs121
   // change deck
   app.changeDeck = function(deckId) {
     app.deck = deckId;
-    localStorage.setItem("deck", deckId);
+    localStorage.setItem('deck', deckId);
 
     db.nextCard(deckId).then(function(c) {
       app.card = c;
@@ -119,12 +119,12 @@ Copyright (c) 2015 ubs121
   };
 
   app.refresh = function() {
-    if (app.route == 'home') {
+    if (app.route === 'home') {
       // skip current, show next
       db.nextCard(app.deck).then(function(c) {
         app.card = c;
       });
-    } else if (app.route == 'decks') {
+    } else if (app.route === 'decks') {
       db.getDecks().then(function(rs) {
         app.decks = rs;
       });
@@ -132,9 +132,9 @@ Copyright (c) 2015 ubs121
   };
 
   app.add = function() {
-    if (app.route == 'home') {
+    if (app.route === 'home') {
       console.log('add new card');
-    } else if (app.route == 'decks') {
+    } else if (app.route === 'decks') {
       this.$.dlgImport.open();
     }
   };
@@ -153,10 +153,10 @@ Copyright (c) 2015 ubs121
 
     db.importDeck(app.inputDeckName, app.inputDeckURL).then(function() {
       app.refresh();
-      that.$.toast.text = "Successfully imported!";
+      that.$.toast.text = 'Successfully imported!';
       that.$.toast.show();
     }).catch(function(err) {
-      that.$.toast.text = "Import failed! " + err;
+      that.$.toast.text = 'Import failed! ' + err;
       that.$.toast.show();
     });
 
@@ -171,7 +171,7 @@ Copyright (c) 2015 ubs121
   };
 
   app.showNotification = function(title, body, icon) {
-      if (window.Notification && Notification.permission !== "denied") {
+      if (window.Notification && Notification.permission !== 'denied') {
         Notification.requestPermission(function(status) { 
           var n = new Notification(title, { body: body, icon: icon}); 
         });
