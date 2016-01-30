@@ -60,7 +60,11 @@ This web app uses the latest web technologies:
 ## TODO
 - use tilt motion to flip
 - add to home screen
-- excersize notification (use push?)
+- offline support
+
+## Known bugs
+
+- Lovefield query doesn't work on iOS  devices
 
 ## Roadmap
 

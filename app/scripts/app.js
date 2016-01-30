@@ -114,7 +114,8 @@ Copyright (c) 2015 ubs121
       app.card = c;
     });
 
-    // TODO: setTimeout and show notification for exercise !
+    // reset notification
+    app.scheduleNotification();
   };
 
   app.refresh = function() {
@@ -177,6 +178,17 @@ Copyright (c) 2015 ubs121
       } else {
         alert('Your browser doesn\'t support notifications.');
       }
+  };
+
+  app.scheduleNotification = function(e) {
+    if (app.timer) {
+      clearTimeout(app.timer);
+    }
+    // set notification for exercise ! (after 5 minute)
+    app.timer = setTimeout(function() {
+      app.showNotification('Flashcard', 'Excersice time!');
+    }, 300000);
+
   };
 
 })(document);
