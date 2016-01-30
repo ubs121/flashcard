@@ -27,7 +27,7 @@ http://localhost:5080
 
 ## How to create a new deck
 
-Deck is a group of cards. You can create a deck file using the following format (question|answer).
+Deck is a group of cards. You can create a deck file using the following format.
 
 ```
 Cash or charge;Бэлнээр үү, картаар уу|
@@ -35,9 +35,9 @@ Catch you later;Дараа уулзая|
 Certainly;Яг тийм|
 ```
 
-And put this file on some storage. For example, Google Drive could be used for this purpose. 
+And put that file on some storage. For example, Google Drive could be used for this purpose. 
 
-After that copy the URL and import into the app using plus button (+) inside the deck list.
+Then copy the URL of the file and import into the app using plus button (+).
 
 Happy learning!
 
@@ -71,7 +71,6 @@ This web app uses the latest web technologies:
 
 
 ## TODO
-- deploy to app engine
 - use tilt motion to flip
 - support cards with image
 
