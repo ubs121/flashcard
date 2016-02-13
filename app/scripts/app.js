@@ -78,14 +78,18 @@ Copyright (c) 2015 ubs121
   db.connect().then(function() {
     console.log('Database Connected.');
 
-    if (localStorage.deck) { // FIXME: баазын бичлэгийг тоолж шалгах
-      app.changeDeck(localStorage.deck);
-    } else {
-      // load sample data
-      db.importDeck('English Sample', 'data/english.csv').then(function() {
-          app.changeDeck("English Sample");
-      });      
-    }
+    db.isEmpty().then(function(b) {
+      if (b) {
+        console.log('Database is empty !');
+        // load sample data
+        db.importDeck('English Sample', 'data/english.csv').then(function() {
+            console.log('So, data/english.csv loaded!');
+            app.changeDeck("English Sample");
+        }); 
+      } else {
+        app.changeDeck(localStorage.deck);
+      }
+    });
 
   });
 

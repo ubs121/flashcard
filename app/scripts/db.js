@@ -99,6 +99,17 @@ class DataService {
       exec();
   }
 
+  // check if database is empty
+  isEmpty() {
+    return this.db_
+      .select(lf.fn.count(this.card_.question).as('n'))
+      .from(this.card_)
+      .exec()
+      .then(function(results) {
+        return !(results[0]['n'] > 0);
+      });
+  }
+
   // import deck (cards) from the given path into database
   importDeck(deckId, filePath) {
     var that = this;
