@@ -169,7 +169,11 @@ gulp.task('copy', function() {
     'app/bower_components/{webcomponentsjs,platinum-sw,sw-toolbox,promise-polyfill,lovefield}/**/*'
   ]).pipe(gulp.dest(dist('bower_components')));
 
-  return merge(app, bower)
+  // copy 'data' folder
+  var data = gulp.src(['app/data/*'])
+    .pipe(gulp.dest(dist('data')));
+
+  return merge(app, bower, data)
     .pipe($.size({
       title: 'copy'
     }));
